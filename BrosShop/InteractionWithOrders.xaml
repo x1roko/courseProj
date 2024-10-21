@@ -1,0 +1,26 @@
+﻿<Window x:Class="BrosShop.InteractionWithOrders"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BrosShop"
+        mc:Ignorable="d"
+        Title="InteractionWithOrders" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.3*"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="ordersListView"/>
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="Отображать заказы из:"/>
+            <StackPanel x:Name="paymentOrders">
+                <CheckBox x:Name="cassaCheckBox" Content="Касса" Checked="TypeOrderCheckBox_Checked"/>
+                <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked"/>
+                <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked"/>
+            </StackPanel>
+            <Button x:Name="createOrder" Content="Добавить Заказ" Click="CreateOrder_Click"/>
+            <Button x:Name="showStatistics" Content="Посмотреть статистику" Click="ShowStatistics_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,29 @@
+﻿<Window x:Class="BrosShop.AddProductWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BrosShop"
+        mc:Ignorable="d"
+        Title="Добавить товар" Height="450" Width="800" Background="#FF444444">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <StackPanel>
+        <TextBlock Text="Имя товара:"/>
+        <TextBox Name="nameProductTextBox"/>
+        <TextBlock Text="Закупочная стоимость 1 штуки:"/>
+        <TextBox Name="purcharesePriceProductTextBox"/>
+        <TextBlock Text="Описание:"/>
+        <TextBox Name="descriptionProductTextBox"/>
+        <TextBlock Text="Категория:"/>
+        <ComboBox x:Name="categoryComboBox"/>
+        <TextBlock Text="Артикул товара на WB:"/>
+        <TextBox Name="wbArticulProductTextBox"/>
+        <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
+    </StackPanel>
+</Window>

@@ -1,0 +1,62 @@
+﻿<Window x:Class="BrosShop.Products"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BrosShop"
+        mc:Ignorable="d"
+        Title="Каталог товаров" Height="450" Width="800" Background="#FF444444" WindowStyle="SingleBorderWindow">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.3*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListView x:Name="productsListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopProductId}"/>
+                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
+                    <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
+                    <GridViewColumn Header="Описание" DisplayMemberBinding="{Binding BrosShopDescription}"/>
+                    <GridViewColumn Header="Цена" DisplayMemberBinding="{Binding BrosShopPrice}" />
+                    <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
+                    <GridViewColumn Header="">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Изменить" Click="CahngeProductButton_Click"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
+            <ListView x:Name="categoryListView">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Категории">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding BrosShopCategoryTitle}" />
+                                        <CheckBox IsChecked="{Binding BrosShopCategoryIsActive, Mode=TwoWay}" Checked="CategoryCheckBox_Checked" Unchecked="CategoryCheckBox_Checked" Tag="{Binding BrosShopCategoryId}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</Window>
