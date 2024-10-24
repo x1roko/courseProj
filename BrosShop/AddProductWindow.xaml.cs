@@ -58,5 +58,11 @@ namespace BrosShop
             MessageBox.Show($"Товар {product.BrosShopTitle} добавлен");
             Close();
         }
+
+        private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

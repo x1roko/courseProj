@@ -20,6 +20,7 @@
         <TextBox Name="purcharesePriceProductTextBox"/>
         <TextBlock Text="Описание:"/>
         <TextBox Name="descriptionProductTextBox"/>
+        <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
         <TextBlock Text="Категория:"/>
         <ComboBox x:Name="categoryComboBox"/>
         <TextBlock Text="Артикул товара на WB:"/>

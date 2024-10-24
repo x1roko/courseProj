@@ -174,5 +174,9 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+    </Style>
     
 </ResourceDictionary>

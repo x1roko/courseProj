@@ -21,13 +21,13 @@ namespace BrosShop
     /// <summary>
     /// Логика взаимодействия для Products.xaml
     /// </summary>
-    public partial class Products : Window
+    public partial class ShowProductsProductsWindow : Window
     {
         private ObservableCollection<BrosShopProductsModel> _products = new(); // Исправлено
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
         private BrosShopCategoryModel _brosShopCategoryModel = new();
 
-        public Products()
+        public ShowProductsProductsWindow()
         {
             InitializeComponent();
             LoadCategories();
@@ -87,7 +87,7 @@ namespace BrosShop
             categoryListView.ItemsSource = _categories; // Убираем ToList()
         }
 
-        private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox)
             {
