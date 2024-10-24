@@ -13,11 +13,17 @@ namespace BrosShop
 
         public decimal BrosShopPrice { get; set; }
 
+        public decimal BrosShopPurcharesePrice { get; set; }
+
+        public decimal BrosShopDiscountPrice { get; set; }
+
+        public decimal BrosShopProfit {  get; set; }
+
         public string BrosShopTitle { get; set; } = null!;
 
         public int? BrosShopDiscountPercent { get; set; }
 
-        public string? BrosShopDescription { get; set; }
+        //public string? BrosShopDescription { get; set; }
 
         public string BrosShopCategoryTitle { get; set; }
 

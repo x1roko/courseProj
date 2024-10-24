@@ -1,4 +1,5 @@
 ﻿using BrosShop.Models;
+using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -21,18 +22,28 @@ namespace BrosShop
     /// <summary>
     /// Логика взаимодействия для Products.xaml
     /// </summary>
-    public partial class ShowProductsProductsWindow : Window
+    public partial class ShowProductsWindow : Window
     {
         private ObservableCollection<BrosShopProductsModel> _products = new(); // Исправлено
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
         private BrosShopCategoryModel _brosShopCategoryModel = new();
 
-        public ShowProductsProductsWindow()
+        public ShowProductsWindow()
         {
             InitializeComponent();
             LoadCategories();
             LoadProducts();
             categoryListView.DataContext = _categories;
+        }
+
+        public static decimal GetDiscountPrice(decimal price, int? discountPercent)
+        {
+            if (discountPercent.HasValue && discountPercent.Value >= 0 && discountPercent.Value <= 100)
+            {
+                decimal discountFactor = (100 - discountPercent.Value) / 100m; 
+                return Math.Round(price * discountFactor, 2);
+            }
+            return Math.Round(price, 2);
         }
 
         public void LoadProducts()
@@ -42,14 +53,20 @@ namespace BrosShop
 
             // Выполняем запрос к базе данных
             var productsQuery = context.BrosShopProducts
+                .Include(p => p.BrosShopProductAttributes)
                 .Select(p => new BrosShopProductsModel
                 {
                     BrosShopProductId = p.BrosShopProductId,
                     BrosShopTitle = p.BrosShopTitle,
                     BrosShopPrice = p.BrosShopPrice,
+                    BrosShopDiscountPercent = p.BrosShopDiscountPercent,
+                    BrosShopDiscountPrice = GetDiscountPrice(p.BrosShopPrice, p.BrosShopDiscountPercent),
+                    BrosShopPurcharesePrice = p.BrosShopPurcharesePrice,
+                    BrosShopProfit = GetDiscountPrice(p.BrosShopPrice, p.BrosShopDiscountPercent) - p.BrosShopPurcharesePrice,
                     BrosShopCategoryTitle = p.BrosShopCategory.BrosShopCategoryTitle,
                     BrosShopAttributeId = p.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
-                    BrosShopDescription = p.BrosShopDescription
+                    BrosShopCount = p.BrosShopProductAttributes.Count,
+                    //BrosShopDescription = p.BrosShopDescription
                 }).ToList(); // Выполняем запрос здесь
 
             // Получаем активные категории
@@ -57,8 +74,6 @@ namespace BrosShop
                 .Where(c => c.BrosShopCategoryIsActive)
                 .Select(c => c.BrosShopCategoryTitle)
                 .ToList();
-
-            //MessageBox.Show("Active Categories: " + string.Join(", ", activeCategories));
 
             // Фильтруем продукты по активным категориям
             foreach (var product in productsQuery)

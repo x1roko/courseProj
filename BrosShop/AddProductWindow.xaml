@@ -13,18 +13,23 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <StackPanel>
-        <TextBlock Text="Имя товара:"/>
-        <TextBox Name="nameProductTextBox"/>
-        <TextBlock Text="Закупочная стоимость 1 штуки:"/>
-        <TextBox Name="purcharesePriceProductTextBox"/>
-        <TextBlock Text="Описание:"/>
-        <TextBox Name="descriptionProductTextBox"/>
-        <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
-        <TextBlock Text="Категория:"/>
-        <ComboBox x:Name="categoryComboBox"/>
-        <TextBlock Text="Артикул товара на WB:"/>
-        <TextBox Name="wbArticulProductTextBox"/>
-        <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel>
+            <TextBlock Text="Имя товара:"/>
+            <TextBox Name="nameProductTextBox"/>
+            <TextBlock Text="Закупочная стоимость 1 штуки:"/>
+            <TextBox Name="purcharesePriceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+            <TextBlock Text="Цена продажи 1 штуки"/>
+            <TextBox x:Name="priceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+            <TextBlock x:Name="profitTextBlock"/>
+            <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
+            <TextBlock x:Name="categoryTextBlock" Text="Категория:"/>
+            <ComboBox x:Name="categoryComboBox"/>
+            <TextBlock Text="Артикул товара на WB:"/>
+            <TextBox Name="wbArticulProductTextBox"/>
+            <TextBlock Text="Описание:"/>
+            <RichTextBox Name="descriptionProductTextBox"/>
+            <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

@@ -1,18 +1,7 @@
 ﻿using BrosShop.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BrosShop
 {
@@ -29,11 +18,9 @@ namespace BrosShop
 
         public void LoadCategories()
         {
-            
+
             using BrosShopDbContext context = new();
             var categoriesQuery = context.BrosShopCategories.ToList();
-
-            //categoryComboBox.ItemsSource = categoriesQuery;
 
             foreach (var category in categoriesQuery)
             {
@@ -61,8 +48,41 @@ namespace BrosShop
 
         private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
         {
-
+            bool isChecked = categoryCheckBox.IsChecked ?? false;
+            categoryComboBox.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
+            categoryTextBlock.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        private void PriceProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                priceProductTextBox.Style = (Style)FindResource(typeof(TextBox));
+                purcharesePriceProductTextBox.Style = (Style)FindResource(typeof(TextBox));
+                if (priceProductTextBox.Text.Length > 0 && purcharesePriceProductTextBox.Text.Length > 0)
+                {
+                    decimal priceProduct, purchasePriceProduct;
+                    bool isValidPrice = decimal.TryParse(priceProductTextBox.Text, out priceProduct);
+                    bool isValidPurchasePrice = decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePriceProduct);
+                    if (isValidPrice && isValidPurchasePrice)
+                    {
+                        profitTextBlock.Text = $"{priceProduct - purchasePriceProduct}";
+                        return;
+                    }
+                    if (!isValidPrice)
+                    {
+                        priceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
+                    }
+                    if (!isValidPurchasePrice)
+                    {
+                        purcharesePriceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Пожалуйста введите корректные значения для цены");
+            }
+        }
     }
 }
