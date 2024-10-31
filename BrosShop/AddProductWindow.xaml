@@ -14,22 +14,41 @@
         </ResourceDictionary>
     </Window.Resources>
     <ScrollViewer>
-        <StackPanel>
-            <TextBlock Text="Имя товара:"/>
-            <TextBox Name="nameProductTextBox"/>
-            <TextBlock Text="Закупочная стоимость 1 штуки:"/>
-            <TextBox Name="purcharesePriceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
-            <TextBlock Text="Цена продажи 1 штуки"/>
-            <TextBox x:Name="priceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
-            <TextBlock x:Name="profitTextBlock"/>
-            <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
-            <TextBlock x:Name="categoryTextBlock" Text="Категория:"/>
-            <ComboBox x:Name="categoryComboBox"/>
-            <TextBlock Text="Артикул товара на WB:"/>
-            <TextBox Name="wbArticulProductTextBox"/>
-            <TextBlock Text="Описание:"/>
-            <RichTextBox Name="descriptionProductTextBox"/>
-            <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.4*"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.6*"/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Имя товара:"/>
+                <TextBox Name="nameProductTextBox" FontSize="40"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="Закупочная стоимость 1 штуки:"/>
+                <TextBox Name="purcharesePriceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+                <TextBlock Text="Цена продажи 1 штуки"/>
+                <TextBox x:Name="priceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+                <TextBlock x:Name="profitTextBlock" Text="Прибыль с 1 штуки:"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
+                <TextBlock x:Name="categoryTextBlock" Text="Категория:"/>
+                <ComboBox x:Name="categoryComboBox"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2">
+                <TextBlock Text="Артикул товара на WB:"/>
+                <TextBox Name="wbArticulProductTextBox"/>
+                <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click" VerticalAlignment="Bottom"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1">
+                <TextBlock Text="Описание:"/>
+                <RichTextBox Name="descriptionProductTextBox"/>
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Window>

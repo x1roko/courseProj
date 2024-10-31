@@ -1,7 +1,11 @@
 ﻿using BrosShop.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace BrosShop
 {
@@ -66,7 +70,7 @@ namespace BrosShop
                     bool isValidPurchasePrice = decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePriceProduct);
                     if (isValidPrice && isValidPurchasePrice)
                     {
-                        profitTextBlock.Text = $"{priceProduct - purchasePriceProduct}";
+                        profitTextBlock.Text = $"Прибыль с 1 штуки: {priceProduct - purchasePriceProduct}";
                         return;
                     }
                     if (!isValidPrice)

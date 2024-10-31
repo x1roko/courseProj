@@ -12,4 +12,6 @@ public partial class BrosShopOrder
     public DateTime BrosShopDateTimeOrder { get; set; }
 
     public string? BrosShopTypeOrder { get; set; }
+
+    public virtual BrosShopUser BrosShopUser { get; set; } = null!;
 }

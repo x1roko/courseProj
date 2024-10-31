@@ -19,5 +19,7 @@ public partial class BrosShopUser
 
     public string BrosShopPhoneNumber { get; set; } = null!;
 
+    public virtual ICollection<BrosShopOrder> BrosShopOrders { get; set; } = new List<BrosShopOrder>();
+
     public virtual ICollection<BrosShopReview> BrosShopReviews { get; set; } = new List<BrosShopReview>();
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
+using System.IO;
 
 namespace BrosShop.Models;
 
@@ -29,7 +26,11 @@ public partial class BrosShopDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Administrator> Administrators { get; set; }
+
     public virtual DbSet<BrosShopCategory> BrosShopCategories { get; set; }
+
+    public virtual DbSet<BrosShopImage> BrosShopImages { get; set; }
 
     public virtual DbSet<BrosShopOrder> BrosShopOrders { get; set; }
 
@@ -49,6 +50,23 @@ public partial class BrosShopDbContext : DbContext
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
 
+        modelBuilder.Entity<Administrator>(entity =>
+        {
+            entity.HasKey(e => e.BrosShopAdministratorId).HasName("PRIMARY");
+
+            entity.Property(e => e.BrosShopAdministratorId).HasColumnName("BrosShop_AdministratorId");
+            entity.Property(e => e.BrosShopIsAdmin)
+                .HasDefaultValueSql("b'0'")
+                .HasColumnType("bit(1)")
+                .HasColumnName("BrosShop_IsAdmin");
+            entity.Property(e => e.BrosShopLogin)
+                .HasMaxLength(45)
+                .HasColumnName("BrosShop_Login");
+            entity.Property(e => e.BrosShopPassword)
+                .HasMaxLength(45)
+                .HasColumnName("BrosShop_Password");
+        });
+
         modelBuilder.Entity<BrosShopCategory>(entity =>
         {
             entity.HasKey(e => e.BrosShopCategoryId).HasName("PRIMARY");
@@ -61,11 +79,33 @@ public partial class BrosShopDbContext : DbContext
                 .HasColumnName("BrosShop_CategoryTitle");
         });
 
+        modelBuilder.Entity<BrosShopImage>(entity =>
+        {
+            entity.HasKey(e => e.BrosShopImagesId).HasName("PRIMARY");
+
+            entity.ToTable("BrosShop_Images");
+
+            entity.HasIndex(e => e.BrosShopProductId, "BrosShop_FK_Images_idx");
+
+            entity.Property(e => e.BrosShopImagesId).HasColumnName("BrosShop_ImagesId");
+            entity.Property(e => e.BrosShopImageTitle)
+                .HasMaxLength(45)
+                .HasColumnName("BrosShop_ImageTitle");
+            entity.Property(e => e.BrosShopProductId).HasColumnName("BrosShop_ProductId");
+
+            entity.HasOne(d => d.BrosShopProduct).WithMany(p => p.BrosShopImages)
+                .HasForeignKey(d => d.BrosShopProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("BrosShop_FK_Images");
+        });
+
         modelBuilder.Entity<BrosShopOrder>(entity =>
         {
             entity.HasKey(e => e.BrosShopOrderId).HasName("PRIMARY");
 
             entity.ToTable("BrosShop_Order");
+
+            entity.HasIndex(e => e.BrosShopUserId, "fk_Usersfk_idx");
 
             entity.Property(e => e.BrosShopOrderId).HasColumnName("BrosShop_OrderId");
             entity.Property(e => e.BrosShopDateTimeOrder)
@@ -77,6 +117,11 @@ public partial class BrosShopDbContext : DbContext
                 .HasColumnType("enum('веб-сайт','касса','WB')")
                 .HasColumnName("BrosShop_TypeOrder");
             entity.Property(e => e.BrosShopUserId).HasColumnName("BrosShop_UserId");
+
+            entity.HasOne(d => d.BrosShopUser).WithMany(p => p.BrosShopOrders)
+                .HasForeignKey(d => d.BrosShopUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("BrosShop_FK_Users");
         });
 
         modelBuilder.Entity<BrosShopOrderComposition>(entity =>
