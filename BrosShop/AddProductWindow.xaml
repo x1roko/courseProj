@@ -24,6 +24,9 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            <StackPanel>
+                <Image x:Name="mainImageProduct"/>
+            </StackPanel>
             <StackPanel Grid.Column="1">
                 <TextBlock Text="Имя товара:"/>
                 <TextBox Name="nameProductTextBox" FontSize="40"/>

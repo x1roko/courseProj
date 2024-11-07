@@ -15,45 +15,59 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BrosShop
 {
     /// <summary>
     /// Логика взаимодействия для Products.xaml
     /// </summary>
-    public partial class ShowProductsWindow : Window
+    public partial class ShowProductsPage : Page
     {
-        private ObservableCollection<BrosShopProductsModel> _products = new(); // Исправлено
+        private ObservableCollection<BrosShopProductsModel> _products = new();
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
-        private BrosShopCategoryModel _brosShopCategoryModel = new();
+        private int _currentPage = 1; // Текущая страница
+        private const int _pageSize = 10; // Количество элементов на странице
 
-        public ShowProductsWindow()
+        public ShowProductsPage()
         {
             InitializeComponent();
-            LoadCategories();
-            LoadProducts();
-            categoryListView.DataContext = _categories;
+            LoadWindow();
+        }
+
+        public async void LoadWindow()
+        {
+            await LoadCategoriesAsync();
+            await LoadProductsAsync();
+            ChangeCurrentPage();
         }
 
         public static decimal GetDiscountPrice(decimal price, int? discountPercent)
         {
             if (discountPercent.HasValue && discountPercent.Value >= 0 && discountPercent.Value <= 100)
             {
-                decimal discountFactor = (100 - discountPercent.Value) / 100m; 
+                decimal discountFactor = (100 - discountPercent.Value) / 100m;
                 return Math.Round(price * discountFactor, 2);
             }
             return Math.Round(price, 2);
         }
 
-        public void LoadProducts()
+        public async Task LoadProductsAsync()
         {
             _products.Clear();
-            using BrosShopDbContext context = new();
+            using var context = new BrosShopDbContext();
 
-            // Выполняем запрос к базе данных
-            var productsQuery = context.BrosShopProducts
+            // Получаем активные категории
+            var activeCategoryTitles = _categories
+                .Where(c => c.BrosShopCategoryIsActive)
+                .Select(c => c.BrosShopCategoryTitle)
+                .ToHashSet();
+
+            // Выполняем запрос к базе данных с фильтрацией по активным категориям
+            var productsQuery = await context.BrosShopProducts
                 .Include(p => p.BrosShopProductAttributes)
+                .Where(p => activeCategoryTitles.Contains(p.BrosShopCategory.BrosShopCategoryTitle))
+                .Skip((_currentPage - 1) * _pageSize)
+                .Take(_pageSize)
                 .Select(p => new BrosShopProductsModel
                 {
                     BrosShopProductId = p.BrosShopProductId,
@@ -65,44 +79,36 @@ namespace BrosShop
                     BrosShopProfit = GetDiscountPrice(p.BrosShopPrice, p.BrosShopDiscountPercent) - p.BrosShopPurcharesePrice,
                     BrosShopCategoryTitle = p.BrosShopCategory.BrosShopCategoryTitle,
                     BrosShopAttributeId = p.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
-                    BrosShopCount = p.BrosShopProductAttributes.Count,
-                    //BrosShopDescription = p.BrosShopDescription
-                }).ToList(); // Выполняем запрос здесь
+                    BrosShopCount = p.BrosShopProductAttributes.Count
+                })
+                .ToListAsync();
 
-            // Получаем активные категории
-            var activeCategories = _categories
-                .Where(c => c.BrosShopCategoryIsActive)
-                .Select(c => c.BrosShopCategoryTitle)
-                .ToList();
-
-            // Фильтруем продукты по активным категориям
+            
+            // Добавляем отфильтрованные продукты в коллекцию
             foreach (var product in productsQuery)
             {
-                if (activeCategories.Contains(product.BrosShopCategoryTitle))
-                {
-                    _products.Add(product);
-                }
+                _products.Add(product);
             }
-
             productsListView.ItemsSource = _products;
         }
 
-        public void LoadCategories()
+        public async Task LoadCategoriesAsync()
         {
-            using BrosShopDbContext context = new();
-            var categoriesQuery = context.BrosShopCategories
+            using var context = new BrosShopDbContext();
+            var categoriesQuery = await context.BrosShopCategories
                 .Select(c => new BrosShopCategoryModel
                 {
                     BrosShopCategoryId = c.BrosShopCategoryId,
                     BrosShopCategoryTitle = c.BrosShopCategoryTitle,
                     BrosShopCategoryIsActive = true
-                }).ToList(); // Выполняем запрос здесь
+                })
+                .ToListAsync();
 
             _categories = new ObservableCollection<BrosShopCategoryModel>(categoriesQuery);
-            categoryListView.ItemsSource = _categories; // Убираем ToList()
+            categoryListView.ItemsSource = _categories;
         }
 
-        private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
+        private async void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox checkBox)
             {
@@ -110,23 +116,44 @@ namespace BrosShop
                 var category = _categories.FirstOrDefault(c => c.BrosShopCategoryId == index);
                 if (category != null)
                 {
-                    category.BrosShopCategoryIsActive = checkBox.IsChecked.GetValueOrDefault(); // Используем GetValueOrDefault
+                    category.BrosShopCategoryIsActive = checkBox.IsChecked.GetValueOrDefault();
                     category.OnPropertyChanged(nameof(category.BrosShopCategoryIsActive));
-                    //MessageBox.Show($"Category {category.BrosShopCategoryTitle} is now {(category.BrosShopCategoryIsActive ? "active" : "inactive")}");
                 }
-                LoadProducts();
+                await LoadProductsAsync();
             }
         }
 
         private void CahngeProductButton_Click(object sender, RoutedEventArgs e)
         {
-
+            // Реализация метода ChangeProductButton_Click
         }
 
         private void AddProductButton_Click(object sender, RoutedEventArgs e)
         {
             AddProductWindow window = new();
             window.Show();
+        }
+
+        private async void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                await LoadProductsAsync();
+                ChangeCurrentPage();
+            }
+        }
+
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            _currentPage++;
+            await LoadProductsAsync();
+            ChangeCurrentPage();
+        }
+
+        private void ChangeCurrentPage()
+        {
+            currentPageTextBlock.Text = $"Текущая страница : {_currentPage}";
         }
     }
 }

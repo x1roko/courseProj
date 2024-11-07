@@ -1,25 +1,24 @@
-﻿<Window x:Class="BrosShop.ShowProductsWindow"
+﻿<Page x:Class="BrosShop.ShowProductsPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Каталог товаров" Height="450" Width="800" Background="#FF444444" WindowStyle="SingleBorderWindow">
-    <Window.Resources>
+        Title="Каталог товаров" Height="450" Width="800" Background="#FF444444">
+    <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>
+    </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-
         <ListView x:Name="productsListView">
             <ListView.View>
                 <GridView>
@@ -60,6 +59,15 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            <TextBlock x:Name="currentPageTextBlock"/>
+            <Grid VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="previousButton" Content="back" Click="PreviousButton_Click"/>
+                <Button x:Name="nextButton" Grid.Column="1" Content="next" Click="NextButton_Click"/>
+            </Grid>
         </StackPanel>
     </Grid>
-</Window>
+</Page>

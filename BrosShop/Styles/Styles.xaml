@@ -11,7 +11,7 @@
         <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
     </Style>
-    
+
     <Style TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
@@ -189,9 +189,56 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
     </Style>
-    
+
+    <Style TargetType="TabControl">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    </Style>
+
+    <Style TargetType="TabItem">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="35"/>
+        <Setter Property="Margin" Value="2"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Grid>
+                        <Border x:Name="Border"
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="5">
+                            <ContentPresenter x:Name="Content" 
+                                          ContentSource="Header" 
+                                          HorizontalAlignment="Stretch" 
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource SelectedDarkBackgroundBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource DarkButtonForegroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource SelectedDarkBackgroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

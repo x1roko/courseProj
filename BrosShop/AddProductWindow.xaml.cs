@@ -6,6 +6,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace BrosShop
 {
@@ -14,13 +17,19 @@ namespace BrosShop
     /// </summary>
     public partial class AddProductWindow : Window
     {
+        private HttpClient _httpClient;
         public AddProductWindow()
         {
             InitializeComponent();
-            LoadCategories();
+            LoadWindow();
+        } 
+
+        public async void LoadWindow()
+        {
+            await LoadCategoriesAsync();
         }
 
-        public void LoadCategories()
+        public async Task LoadCategoriesAsync()
         {
 
             using BrosShopDbContext context = new();
