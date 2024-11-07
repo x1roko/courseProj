@@ -1,15 +1,16 @@
 ﻿using BrosShop.Models;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BrosShop
 {
     /// <summary>
     /// Логика взаимодействия для InteractionWithOrders.xaml
     /// </summary>
-    public partial class InteractionWithOrders : Window
+    public partial class InteractionWithOrdersPage : Page
     {
 
-        public InteractionWithOrders()
+        public InteractionWithOrdersPage()
         {
             InitializeComponent();
             LoadWindow();
