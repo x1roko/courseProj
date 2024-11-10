@@ -23,8 +23,6 @@ namespace BrosShop
 
         public int? BrosShopDiscountPercent { get; set; }
 
-        //public string? BrosShopDescription { get; set; }
-
         public string BrosShopCategoryTitle { get; set; }
 
         public int? BrosShopAttributeId { get; set; }

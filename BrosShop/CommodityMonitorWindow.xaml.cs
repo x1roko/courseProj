@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrosShop.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,15 +34,15 @@ namespace BrosShop
                     case "ProductsTabItem":
                         mainFrame.Navigate(new ShowProductsPage());
                         break;
-                    /*case "Page 2":
-                        mainFrame.Navigate(new Page2());
+                    case "OrdersTabItem":
+                        mainFrame.Navigate(new InteractionWithOrdersPage());
                         break;
-                    case "Page 3":
-                        mainFrame.Navigate(new Page2());
+                    case "CategoryTabItem":
+                        mainFrame.Navigate(new ShowCategoryPage());
                         break;
-                    case "Page 4":
-                        mainFrame.Navigate(new Page2());
-                        break;*/
+                    case "ClientsTabItem":
+                        mainFrame.Navigate(new ShowClientsPage());
+                        break;
                 }
             }
         }

@@ -23,7 +23,6 @@ namespace BrosShop
     /// </summary>
     public partial class ShowProductsPage : Page
     {
-        private ObservableCollection<BrosShopProductsModel> _products = new();
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 10; // Количество элементов на странице
@@ -53,19 +52,19 @@ namespace BrosShop
 
         public async Task LoadProductsAsync()
         {
-            _products.Clear();
             using var context = new BrosShopDbContext();
 
             // Получаем активные категории
-            var activeCategoryTitles = _categories
+            var activeCategoryIds = _categories
                 .Where(c => c.BrosShopCategoryIsActive)
-                .Select(c => c.BrosShopCategoryTitle)
+                .Select(c => c.BrosShopCategoryId)
                 .ToHashSet();
 
             // Выполняем запрос к базе данных с фильтрацией по активным категориям
             var productsQuery = await context.BrosShopProducts
+                .AsNoTracking()
                 .Include(p => p.BrosShopProductAttributes)
-                .Where(p => activeCategoryTitles.Contains(p.BrosShopCategory.BrosShopCategoryTitle))
+                .Where(p => activeCategoryIds.Contains(p.BrosShopCategory.BrosShopCategoryId))
                 .Skip((_currentPage - 1) * _pageSize)
                 .Take(_pageSize)
                 .Select(p => new BrosShopProductsModel
@@ -83,13 +82,7 @@ namespace BrosShop
                 })
                 .ToListAsync();
 
-            
-            // Добавляем отфильтрованные продукты в коллекцию
-            foreach (var product in productsQuery)
-            {
-                _products.Add(product);
-            }
-            productsListView.ItemsSource = _products;
+            productsListView.ItemsSource = productsQuery.ToList();//_products;
         }
 
         public async Task LoadCategoriesAsync()

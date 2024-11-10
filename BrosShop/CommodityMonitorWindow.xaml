@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Товарный монитор" Height="450" Width="800"  Background="#FF444444">
+        Title="Товарный монитор"
+        WindowState="Maximized"
+        Background="#FF444444">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

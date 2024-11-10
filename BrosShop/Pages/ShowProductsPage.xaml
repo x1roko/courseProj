@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Каталог товаров" Height="450" Width="800" Background="#FF444444">
+        Title="Каталог товаров"
+        Background="#FF444444">
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/Styles.xaml"/>
+                <ResourceDictionary Source="../Styles/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -31,6 +32,7 @@
                     <GridViewColumn Header="Цена с учётом скидки" DisplayMemberBinding="{Binding BrosShopDiscountPrice}" />
                     <GridViewColumn Header="Прибыль с 1 продажи" DisplayMemberBinding="{Binding BrosShopProfit}" />
                     <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
+                    <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
                     <GridViewColumn Header="">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

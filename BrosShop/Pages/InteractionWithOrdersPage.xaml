@@ -5,7 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="InteractionWithOrders" Height="450" Width="800">
+        Title="InteractionWithOrders">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -19,8 +26,8 @@
                 <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked"/>
                 <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked"/>
             </StackPanel>
-            <Button x:Name="createOrder" Content="Добавить Заказ" Click="CreateOrder_Click"/>
-            <Button x:Name="showStatistics" Content="Посмотреть статистику" Click="ShowStatistics_Click"/>
+            <TextBlock x:Name="showProfitTextBlock"/>
+            <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -11,6 +11,8 @@ public partial class BrosShopOrderComposition
 
     public sbyte BrosShopQuantity { get; set; }
 
+    public decimal BrosShopCost { get; set; }
+
     public virtual BrosShopOrder BrosShopOrder { get; set; } = null!;
 
     public virtual BrosShopProduct BrosShopProduct { get; set; } = null!;

@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace BrosShop.Models;
 
@@ -134,6 +137,9 @@ public partial class BrosShopDbContext : DbContext
 
             entity.HasIndex(e => new { e.BrosShopProductId, e.BrosShopOrderId }, "BrosShop_ProductId").IsUnique();
 
+            entity.Property(e => e.BrosShopCost)
+                .HasPrecision(7, 2)
+                .HasColumnName("BrosShop_Cost");
             entity.Property(e => e.BrosShopOrderId).HasColumnName("BrosShop_OrderId");
             entity.Property(e => e.BrosShopProductId).HasColumnName("BrosShop_ProductId");
             entity.Property(e => e.BrosShopQuantity)
@@ -170,10 +176,10 @@ public partial class BrosShopDbContext : DbContext
                 .HasDefaultValueSql("'0'")
                 .HasColumnName("BrosShop_DiscountPercent");
             entity.Property(e => e.BrosShopPrice)
-                .HasPrecision(6, 2)
+                .HasPrecision(7, 2)
                 .HasColumnName("BrosShop_Price");
             entity.Property(e => e.BrosShopPurcharesePrice)
-                .HasPrecision(6, 2)
+                .HasPrecision(7, 2)
                 .HasColumnName("BrosShop_PurcharesePrice");
             entity.Property(e => e.BrosShopTitle)
                 .HasMaxLength(100)
