@@ -30,22 +30,21 @@ namespace BrosShop
         public ShowProductsPage()
         {
             InitializeComponent();
-            LoadWindow();
+            LoadWindowAsync();
         }
 
-        public async void LoadWindow()
+        private async Task LoadWindowAsync()
         {
             await LoadCategoriesAsync();
             await LoadProductsAsync();
-            ChangeCurrentPage();
+            UpdateCurrentPageDisplay();
         }
 
         public static decimal GetDiscountPrice(decimal price, int? discountPercent)
         {
-            if (discountPercent.HasValue && discountPercent.Value >= 0 && discountPercent.Value <= 100)
+            if (discountPercent is >= 0 and <= 100)
             {
-                decimal discountFactor = (100 - discountPercent.Value) / 100m;
-                return Math.Round(price * discountFactor, 2);
+                return Math.Round(price * (1 - discountPercent.Value / 100m), 2);
             }
             return Math.Round(price, 2);
         }
@@ -54,14 +53,12 @@ namespace BrosShop
         {
             using var context = new BrosShopDbContext();
 
-            // Получаем активные категории
             var activeCategoryIds = _categories
                 .Where(c => c.BrosShopCategoryIsActive)
                 .Select(c => c.BrosShopCategoryId)
                 .ToHashSet();
 
-            // Выполняем запрос к базе данных с фильтрацией по активным категориям
-            var productsQuery = await context.BrosShopProducts
+            var products = await context.BrosShopProducts
                 .AsNoTracking()
                 .Include(p => p.BrosShopProductAttributes)
                 .Where(p => activeCategoryIds.Contains(p.BrosShopCategory.BrosShopCategoryId))
@@ -82,13 +79,13 @@ namespace BrosShop
                 })
                 .ToListAsync();
 
-            productsListView.ItemsSource = productsQuery.ToList();//_products;
+            productsListView.ItemsSource = products;
         }
 
         public async Task LoadCategoriesAsync()
         {
             using var context = new BrosShopDbContext();
-            var categoriesQuery = await context.BrosShopCategories
+            var categories = await context.BrosShopCategories
                 .Select(c => new BrosShopCategoryModel
                 {
                     BrosShopCategoryId = c.BrosShopCategoryId,
@@ -97,7 +94,7 @@ namespace BrosShop
                 })
                 .ToListAsync();
 
-            _categories = new ObservableCollection<BrosShopCategoryModel>(categoriesQuery);
+            _categories = new ObservableCollection<BrosShopCategoryModel>(categories);
             categoryListView.ItemsSource = _categories;
         }
 
@@ -111,20 +108,14 @@ namespace BrosShop
                 {
                     category.BrosShopCategoryIsActive = checkBox.IsChecked.GetValueOrDefault();
                     category.OnPropertyChanged(nameof(category.BrosShopCategoryIsActive));
+                    await LoadProductsAsync();
                 }
-                await LoadProductsAsync();
             }
-        }
-
-        private void CahngeProductButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Реализация метода ChangeProductButton_Click
         }
 
         private void AddProductButton_Click(object sender, RoutedEventArgs e)
         {
-            AddProductWindow window = new();
-            window.Show();
+            new AddProductWindow().Show();
         }
 
         private async void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -133,7 +124,7 @@ namespace BrosShop
             {
                 _currentPage--;
                 await LoadProductsAsync();
-                ChangeCurrentPage();
+                UpdateCurrentPageDisplay();
             }
         }
 
@@ -141,12 +132,17 @@ namespace BrosShop
         {
             _currentPage++;
             await LoadProductsAsync();
-            ChangeCurrentPage();
+            UpdateCurrentPageDisplay();
         }
 
-        private void ChangeCurrentPage()
+        private void UpdateCurrentPageDisplay()
         {
             currentPageTextBlock.Text = $"Текущая страница : {_currentPage}";
+        }
+
+        private void ShowProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            new ShowProductWindow(1).Show(); 
         }
     }
 }

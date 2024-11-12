@@ -36,7 +36,7 @@
                     <GridViewColumn Header="">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Изменить" Click="CahngeProductButton_Click"/>
+                                <Button Content="Посмотреть" Click="ShowProductButton_Click"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
