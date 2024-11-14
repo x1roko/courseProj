@@ -7,7 +7,26 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ShowClientsPage">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    
     <StackPanel>
-        <ListView x:Name="clientsListView"/>
+        <ListView x:Name="clientsListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopUserId}"/>
+                    <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding BrosShopUsername}"/>
+                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding BrosShopEmail}"/>
+                    <GridViewColumn Header="Полное имя" DisplayMemberBinding="{Binding BrosShopFullName}"/>
+                    <GridViewColumn Header="Дата регистрации" DisplayMemberBinding="{Binding BrosShopRegistrationDate}" />
+                    <GridViewColumn Header="Номер телефона" DisplayMemberBinding="{Binding BrosShopPhoneNumber}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </StackPanel>
 </Page>

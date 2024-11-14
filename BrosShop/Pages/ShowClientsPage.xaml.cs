@@ -25,6 +25,7 @@ namespace BrosShop.Pages
         public ShowClientsPage()
         {
             InitializeComponent();
+            LoadPage();
         }
 
         public async Task LoadPage()

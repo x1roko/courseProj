@@ -18,7 +18,16 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="ordersListView"/>
+        <ListView x:Name="ordersListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
+                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
+                    <GridViewColumn Header="Дата заказа" DisplayMemberBinding="{Binding BrosShopDateTimeOrder}"/>
+                    <GridViewColumn Header="Тип заказа" DisplayMemberBinding="{Binding BrosShopTypeOrder}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
         <StackPanel Grid.Column="1">
             <TextBlock Text="Отображать заказы из:"/>
             <StackPanel x:Name="paymentOrders">

@@ -14,15 +14,16 @@ namespace BrosShop
         public InteractionWithOrdersPage()
         {
             InitializeComponent();
-            LoadWindow();
+            LoadPage();
         }
 
-        public async Task LoadWindow()
+        public async Task LoadPage()
         {
             wbCheckBox.IsChecked = true;
             cassaCheckBox.IsChecked = true;
             siteCheckBox.IsChecked = true;
             await CalculateTurnoverAndProfitAsync();
+            LoadOrders();
         }
 
         public void LoadOrders()
@@ -32,16 +33,17 @@ namespace BrosShop
                 BrosShopDbContext context = new();
                 List<BrosShopOrder> orders = [];
                 if (wbCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Where(o => o.BrosShopTypeOrder == "WB"));
+                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "WB"));
                 if (cassaCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Where(o => o.BrosShopTypeOrder == "касса"));
+                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "касса"));
                 if (siteCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Where(o => o.BrosShopTypeOrder == "веб-сайт"));
+                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "веб-сайт"));
                 orders.OrderBy(o => o.BrosShopOrderId);
-                ordersListView.ItemsSource = orders;
+                ordersListView.ItemsSource = orders;//.Select(new {});
             }
             catch (Exception)
             {
+                MessageBox.Show("Возникла ошибка, проверте доступность сервера");
             }
         }
 

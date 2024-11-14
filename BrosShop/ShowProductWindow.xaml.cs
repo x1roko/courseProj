@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BrosShop.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -36,13 +38,65 @@ namespace BrosShop
 
         public async Task LoadWindow(int productId)
         {
-            await LoadImageAsync(productId);
+            try
+            {
+                using var context = new BrosShopDbContext();
+
+                var product = await context.BrosShopProducts
+                    .Include(p => p.BrosShopImages)
+                    .Include(p => p.BrosShopCategory)
+                    .FirstOrDefaultAsync(p => p.BrosShopProductId == productId);
+
+                if (product != null)
+                {
+                    nameProductTextBlock.Text = product.BrosShopTitle;
+                    purcharesePriceProductTextBlock.Text = $"{product.BrosShopPurcharesePrice}";
+                    priceProductTextBlock.Text = $"{product.BrosShopPrice}";
+                    descriptionProductTextBox.Text = $"{product.BrosShopDescription}";
+                    categoryTextBlock.Text = $"{product.BrosShopCategory.BrosShopCategoryTitle}";
+                    wbArticulProductTextBlock.Text = $"{product.BrosShopWbarticul}";
+                    var image = product.BrosShopImages.FirstOrDefault();
+                    if (image != null)
+                    {
+                        mainImageProduct.Source = await LoadImageAsync(image.BrosShopImagesId);
+                    }
+                    var images = product.BrosShopImages;
+                    if (images != null)
+                    {
+                        foreach (var imageInCollection in images)
+                        {
+                            imagesStackPanel.Children.Add(
+                                new Image
+                                {
+                                    Width = 50,
+                                    Height = 50,
+                                    Source = await LoadImageAsync(imageInCollection.BrosShopImagesId)
+                                });
+                        }
+                    }
+                    imagesStackPanel.Children.Add(new Button {
+                        Content = "+",
+                        Width = 50,
+                        Height = 50
+                    });
+                }
+                else
+                {
+                    nameProductTextBlock.Text = "Продукт не найден";
+                    mainImageProduct.Source = null; // Или установить изображение по умолчанию
+                }
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или отображение сообщения пользователю
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}");
+            }
         }
 
-        public async Task LoadImageAsync(int productId)
+
+        public async Task<BitmapImage> LoadImageAsync(int productId)
         {
             var apiString = _configuration["ApiSettings:BaseUrl"];
-            MessageBox.Show($"{apiString}");
             var _httpClient = new HttpClient();
             var response = await _httpClient.GetAsync($"{apiString}{productId}");
             if (response.IsSuccessStatusCode)
@@ -57,8 +111,9 @@ namespace BrosShop
                     bitmapImage.EndInit();
                     bitmapImage.Freeze(); // Замораживаем изображение для использования в разных потоках
                 }
-                mainImageProduct.Source = bitmapImage;
+                return bitmapImage;
             }
+            return null;
         }
 
         private void AddProductButton_Click(object sender, RoutedEventArgs e)

@@ -142,7 +142,17 @@ namespace BrosShop
 
         private void ShowProductButton_Click(object sender, RoutedEventArgs e)
         {
-            new ShowProductWindow(1).Show(); 
+            // Получаем кнопку, которая вызвала событие
+            Button button = sender as Button;
+
+            // Получаем контекст данных, связанный с кнопкой
+            var product = button.DataContext as BrosShopProductsModel; 
+
+            if (product != null)
+            {
+                new ShowProductWindow(product.BrosShopProductId).Show();
+
+            }
         }
     }
 }

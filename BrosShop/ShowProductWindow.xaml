@@ -5,52 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="ShowProductWindow" Height="450" Width="800">
-    <!--<Window.Resources>
+        Title="Товар, подробно" Height="450" Width="800" Background="#FF444444">
+    <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>-->
+    </Window.Resources>
     <ScrollViewer>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.4*"/>
+                <ColumnDefinition Width="0.9*"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.6*"/>
+                <RowDefinition Height="3.1*"/>
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <StackPanel>
-                <Image x:Name="mainImageProduct"/>
+                <Image x:Name="mainImageProduct" Width="200" Height="200"/>
+                <StackPanel x:Name="imagesStackPanel" Orientation="Horizontal"/>
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <TextBlock Text="Имя товара:"/>
-                <TextBox Name="nameProductTextBox" FontSize="40"/>
+                <TextBlock Name="nameProductTextBlock" FontSize="40"/>
             </StackPanel>
             <StackPanel Grid.Row="1">
                 <TextBlock Text="Закупочная стоимость 1 штуки:"/>
-                <TextBox Name="purcharesePriceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+                <TextBlock Name="purcharesePriceProductTextBlock"/>
                 <TextBlock Text="Цена продажи 1 штуки"/>
-                <TextBox x:Name="priceProductTextBox" TextChanged="PriceProductTextBox_TextChanged"/>
+                <TextBlock x:Name="priceProductTextBlock"/>
                 <TextBlock x:Name="profitTextBlock" Text="Прибыль с 1 штуки:"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="1">
-                <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_Checked"  Unchecked="CategoryCheckBox_Checked"/>
+                <!--<CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_Checked"  Unchecked="CategoryCheckBox_Checked"/>-->
                 <TextBlock x:Name="categoryTextBlock" Text="Категория:"/>
-                <ComboBox x:Name="categoryComboBox"/>
+                <!--<ComboBox x:Name="categoryComboBox"/>-->
             </StackPanel>
             <StackPanel Grid.Row="2">
                 <TextBlock Text="Артикул товара на WB:"/>
-                <TextBox Name="wbArticulProductTextBox"/>
-                <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"  VerticalAlignment="Bottom"/>
+                <TextBlock Name="wbArticulProductTextBlock"/>
+                <Button x:Name="addProductButton" Content="Изменить товар" Click="AddProductButton_Click"  VerticalAlignment="Bottom"/>
             </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="1">
                 <TextBlock Text="Описание:"/>
-                <RichTextBox Name="descriptionProductTextBox"/>
+                <TextBlock Name="descriptionProductTextBox"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>

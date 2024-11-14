@@ -7,10 +7,10 @@
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#FF3C3C3C"/>
     <SolidColorBrush x:Key="DarkButtonForegroundBrush" Color="#FFFFFFFF"/>
 
-    <Style TargetType="Window">
+    <!--<Style TargetType="Window">
         <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource DarkForegroundBrush}"/>
-    </Style>
+    </Style>-->
 
     <Style TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
