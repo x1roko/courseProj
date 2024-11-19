@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Товарный монитор"
         WindowState="Maximized"
-        Background="#FF444444">
+        Background="#FF1A1A2E">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -22,14 +22,18 @@
             <RowDefinition Height="*"/>
             <!-- Для Frame -->
         </Grid.RowDefinitions>
-        
-        <TabControl x:Name="mainTabControl"  Grid.Row="0" SelectionChanged="TabControl_SelectionChanged">
+        <StackPanel Orientation="Horizontal">
+            <TabControl x:Name="mainTabControl"  Grid.Row="0" SelectionChanged="TabControl_SelectionChanged">
                 <TabItem Header="Товары" Name="ProductsTabItem"/>
                 <TabItem Header="Заказы" Name="OrdersTabItem"/>
                 <TabItem Header="Категории" Name="CategoryTabItem"/>
                 <TabItem Header="Клиенты" Name="ClientsTabItem"/>
-        </TabControl>
-
+            </TabControl>
+            <!--<ComboBox x:Name="ThemeSelector" SelectionChanged="ThemeSelector_SelectionChanged" Width="150" Margin="10">
+                <ComboBoxItem Content="Светлая тема" Tag="LightTheme"/>
+                <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme" IsSelected="True"/>
+            </ComboBox>-->
+        </StackPanel>
         <Grid Grid.Row="1">
             <Frame Name="mainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
         </Grid>

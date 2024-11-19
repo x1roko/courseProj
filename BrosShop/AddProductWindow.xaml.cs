@@ -21,10 +21,10 @@ namespace BrosShop
         public AddProductWindow()
         {
             InitializeComponent();
-            LoadWindow();
+            LoadWindowAsync();
         } 
 
-        public async void LoadWindow()
+        public async void LoadWindowAsync()
         {
             await LoadCategoriesAsync();
         }
@@ -32,18 +32,18 @@ namespace BrosShop
         public async Task LoadCategoriesAsync()
         {
 
-            using BrosShopDbContext context = new();
+            /*using BrosShopDbContext context = new();
             var categoriesQuery = context.BrosShopCategories.ToList();
 
             foreach (var category in categoriesQuery)
             {
-                categoryComboBox.Items.Add(new ComboBoxItem
+                //categoryComboBox.Items.Add(new ComboBoxItem
                 {
                     Content = category.BrosShopCategoryTitle,
                     Tag = category.BrosShopCategoryId
                 });
             }
-            categoryComboBox.SelectedIndex = 0;
+            categoryComboBox.SelectedIndex = 0;*/
         }
 
         private void AddProductButton_Click(object sender, RoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace BrosShop
         private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
         {
             bool isChecked = categoryCheckBox.IsChecked ?? false;
-            categoryComboBox.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
+            //categoryComboBox.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
             categoryTextBlock.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
         }
 

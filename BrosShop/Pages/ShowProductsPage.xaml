@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Каталог товаров"
-        Background="#FF444444">
+        Title="Каталог товаров">
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,31 +19,41 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="productsListView">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopProductId}"/>
-                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
-                    <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
-                    <GridViewColumn Header="Скидка %" DisplayMemberBinding="{Binding BrosShopDiscountPercent}"/>
-                    <GridViewColumn Header="Цена закупки" DisplayMemberBinding="{Binding BrosShopPurcharesePrice}" />
-                    <GridViewColumn Header="Цена продажи" DisplayMemberBinding="{Binding BrosShopPrice}" />
-                    <GridViewColumn Header="Цена с учётом скидки" DisplayMemberBinding="{Binding BrosShopDiscountPrice}" />
-                    <GridViewColumn Header="Прибыль с 1 продажи" DisplayMemberBinding="{Binding BrosShopProfit}" />
-                    <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
-                    <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
-                    <GridViewColumn Header="">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Посмотреть" Click="ShowProductButton_Click"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <StackPanel>
+            <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для кнопки "Назад" -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Для TextBlock с текущей страницей -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для кнопки "Вперед" -->
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="previousButton" Content="Назад" Click="PreviousButton_Click"/>
+                <TextBlock x:Name="currentPageTextBlock" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
+                <Button x:Name="nextButton" Grid.Column="2" Content="Вперед" Click="NextButton_Click"/>
+            </Grid>
+
+            <ListView x:Name="productsListView" MouseDoubleClick="ProductsListView_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopProductId}"/>
+                        <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
+                        <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
+                        <GridViewColumn Header="Цена закупки" DisplayMemberBinding="{Binding BrosShopPurcharesePrice}" />
+                        <GridViewColumn Header="Цена до скидки" DisplayMemberBinding="{Binding BrosShopPrice}" />
+                        <GridViewColumn Header="Скидка %" DisplayMemberBinding="{Binding BrosShopDiscountPercent}"/>
+                        <GridViewColumn Header="Цена " DisplayMemberBinding="{Binding BrosShopDiscountPrice}" />
+                        <GridViewColumn Header="Прибыль" DisplayMemberBinding="{Binding BrosShopProfit}" />
+                        <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
+                        <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        <Button x:Name="addProductButton" Height="50" Content="Добавить товар" Click="AddProductButton_Click"/>
+        </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1">
-            <Button x:Name="addProductButton" Content="Добавить товар" Click="AddProductButton_Click"/>
             <ListView x:Name="categoryListView">
                 <ListView.View>
                     <GridView>
@@ -61,15 +70,6 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <TextBlock x:Name="currentPageTextBlock"/>
-            <Grid VerticalAlignment="Bottom">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="previousButton" Content="back" Click="PreviousButton_Click"/>
-                <Button x:Name="nextButton" Grid.Column="1" Content="next" Click="NextButton_Click"/>
-            </Grid>
         </StackPanel>
     </Grid>
 </Page>

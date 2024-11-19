@@ -30,14 +30,16 @@ namespace BrosShop
         public ShowProductsPage()
         {
             InitializeComponent();
-            LoadWindowAsync();
+            LoadPageAsync();
         }
 
-        private async Task LoadWindowAsync()
+        private async Task LoadPageAsync()
         {
             await LoadCategoriesAsync();
             await LoadProductsAsync();
             UpdateCurrentPageDisplay();
+            nextButton.Content = "->";
+            previousButton.Content = "<-";
         }
 
         public static decimal GetDiscountPrice(decimal price, int? discountPercent)
@@ -137,7 +139,7 @@ namespace BrosShop
 
         private void UpdateCurrentPageDisplay()
         {
-            currentPageTextBlock.Text = $"Текущая страница : {_currentPage}";
+            currentPageTextBlock.Text = $"{_currentPage}";
         }
 
         private void ShowProductButton_Click(object sender, RoutedEventArgs e)
@@ -152,6 +154,16 @@ namespace BrosShop
             {
                 new ShowProductWindow(product.BrosShopProductId).Show();
 
+            }
+        }
+
+        private void ProductsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectedProduct = productsListView.SelectedItem as BrosShopProductsModel;
+
+            if (selectedProduct != null)
+            {
+                new ShowProductWindow(selectedProduct.BrosShopProductId).Show();
             }
         }
     }

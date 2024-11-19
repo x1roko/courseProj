@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Добавить товар" Height="450" Width="800" Background="#FF444444">
+        Title="Добавить товар" Height="450" Width="800" Background="#FF1A1A2E">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -41,7 +41,6 @@
             <StackPanel Grid.Row="1" Grid.Column="1">
                 <CheckBox x:Name="categoryCheckBox" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_ChangeChecked" Unchecked="CategoryCheckBox_ChangeChecked"/>
                 <TextBlock x:Name="categoryTextBlock" Text="Категория:"/>
-                <ComboBox x:Name="categoryComboBox"/>
             </StackPanel>
             <StackPanel Grid.Row="2">
                 <TextBlock Text="Артикул товара на WB:"/>
