@@ -30,7 +30,7 @@
                 <TextBox x:Name="nameProductTextBox" FontSize="24" IsReadOnly="True" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Категория:"/>
-                <CheckBox x:Name="categoryCheckBox" IsEnabled="False" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_Checked"  Unchecked="CategoryCheckBox_Checked"/>
+                <CheckBox x:Name="categoryCheckBox" IsEnabled="False" Content="Не добавлять категорию" IsChecked="False" Checked="CategoryCheckBox_Checked" Unchecked="CategoryCheckBox_Checked"/>
                 <ComboBox x:Name="categoryComboBox" IsEnabled="False" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Артикул товара на WB:"/>
@@ -45,7 +45,7 @@
                 <TextBlock x:Name="profitTextBlock" Margin="0,0,0,10"/>
             </StackPanel>
 
-            <StackPanel x:Name="imagesStackPanel" Grid.Row="1" Grid.Column="0" Orientation="Horizontal"/>
+            <StackPanel x:Name="imagesStackPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"/>
 
             <!-- Описание -->
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="10">

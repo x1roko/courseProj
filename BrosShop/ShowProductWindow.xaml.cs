@@ -150,16 +150,6 @@ namespace BrosShop
             return null;
         }
 
-        private void AddProductButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void EditProductButton_Click(object sender, RoutedEventArgs e)
         {
             // Разрешаем редактирование полей
@@ -256,6 +246,16 @@ namespace BrosShop
             {
                 MessageBox.Show("Пожалуйста введите корректные значения для цены");
             }
+        }
+
+        private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (categoryCheckBox.IsChecked.HasValue)
+            {
+                categoryComboBox.Visibility = Visibility.Collapsed;
+                return;
+            }
+            categoryComboBox.Visibility = Visibility.Visible;
         }
     }
 }
