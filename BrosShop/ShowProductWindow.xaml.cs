@@ -1,12 +1,14 @@
 ﻿using BrosShop.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,13 +35,12 @@ namespace BrosShop
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .Build();
-            LoadWindow(productId);
+            LoadWindowAsync(productId);
             LoadCategoriesAsync(productId);
         }
 
         public async Task LoadCategoriesAsync(int productId)
         {
-
             using BrosShopDbContext context = new();
 
             var product = context.BrosShopProducts.FirstOrDefault(p => p.BrosShopProductId == productId);
@@ -66,7 +67,7 @@ namespace BrosShop
             }
         }
 
-        public async Task LoadWindow(int productId)
+        public async Task LoadWindowAsync(int productId)
         {
             try
             {
@@ -79,6 +80,7 @@ namespace BrosShop
 
                 if (product != null)
                 {
+                    idTextBlock.Text = $"{product.BrosShopProductId}";
                     // Заполняем поля для редактирования
                     nameProductTextBox.Text = product.BrosShopTitle;
                     purcharesePriceProductTextBox.Text = $"{product.BrosShopPurcharesePrice}";
@@ -108,12 +110,18 @@ namespace BrosShop
                                 });
                         }
                     }
-                    imagesStackPanel.Children.Add(new Button
+                    var uploadButton = new Button
                     {
                         Content = "+",
                         Width = 50,
                         Height = 50
-                    });
+                    };
+
+                    // Привязка обработчика события Click
+                    uploadButton.Click += UploadImage_ButtonClick;
+
+                    // Добавление кнопки в StackPanel
+                    imagesStackPanel.Children.Add(uploadButton);
                 }
                 else
                 {
@@ -125,6 +133,42 @@ namespace BrosShop
             {
                 // Логирование ошибки или отображение сообщения пользователю
                 MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}");
+            }
+        }
+
+        private async void UploadImage_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif",
+                Title = "Select an Image"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var filePath = openFileDialog.FileName;
+                Int32.TryParse(idTextBlock.Text, out int productId);
+                if (productId == 0)
+                    return;
+                var result = await UploadImageAsync(productId, filePath);
+                MessageBox.Show(result ? "Image uploaded successfully!" : "Image upload failed.");
+            }
+        }
+
+        private async Task<bool> UploadImageAsync(int productId, string filePath)
+        {
+
+            var _httpClient = new HttpClient();
+            using (var form = new MultipartFormDataContent())
+            {
+                var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg"); // Убедитесь, что тип контента соответствует вашему файлу
+
+                form.Add(fileContent, "file", System.IO.Path.GetFileName(filePath));
+                var apiString = _configuration["ApiSettings:BaseUrl"];
+                var response = await _httpClient.PostAsync($"{apiString}?productId={productId}", form);
+                return response.IsSuccessStatusCode;
             }
         }
 

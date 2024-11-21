@@ -26,7 +26,7 @@ namespace BrosShop
 
         public async void LoadWindowAsync()
         {
-            await LoadCategoriesAsync();
+            //await LoadCategoriesAsync();
         }
 
         public async Task LoadCategoriesAsync()
@@ -62,7 +62,6 @@ namespace BrosShop
         private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
         {
             bool isChecked = categoryCheckBox.IsChecked ?? false;
-            //categoryComboBox.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
             categoryTextBlock.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
         }
 
