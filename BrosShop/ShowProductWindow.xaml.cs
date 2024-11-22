@@ -151,7 +151,7 @@ namespace BrosShop
                 if (productId == 0)
                     return;
                 var result = await UploadImageAsync(productId, filePath);
-                MessageBox.Show(result ? "Image uploaded successfully!" : "Image upload failed.");
+                MessageBox.Show(result ? "Изображение загруженно" : "Изображение не загруженно");
             }
         }
 
@@ -172,11 +172,11 @@ namespace BrosShop
             }
         }
 
-        public async Task<BitmapImage> LoadImageAsync(int productId)
+        public async Task<BitmapImage> LoadImageAsync(int imageId)
         {
             var apiString = _configuration["ApiSettings:BaseUrl"];
             var _httpClient = new HttpClient();
-            var response = await _httpClient.GetAsync($"{apiString}{productId}");
+            var response = await _httpClient.GetAsync($"{apiString}{imageId}");
             if (response.IsSuccessStatusCode)
             {
                 var imageBytes = await response.Content.ReadAsByteArrayAsync();
@@ -205,9 +205,8 @@ namespace BrosShop
             wbArticulProductTextBox.IsReadOnly = false;
             descriptionProductTextBox.IsReadOnly = false;
 
-            // Активируем кнопку "Сохранить изменения"
-            saveProductButton.IsEnabled = true;
-            editProductButton.IsEnabled = false; // Деактивируем кнопку "Ред
+            saveProductButton.Visibility = Visibility.Visible;
+            editProductButton.Visibility = Visibility.Hidden;
         }
 
         private void SaveProductButton_Click(object sender, RoutedEventArgs e)
@@ -219,7 +218,7 @@ namespace BrosShop
             int category = 0;
             if (categoryCheckBox.IsChecked.Value)
                  category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
-            string wbArticul = wbArticulProductTextBox.Text;
+            Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
             string description = descriptionProductTextBox.Text;
 
             // Проверяем, что цены корректные
@@ -235,23 +234,24 @@ namespace BrosShop
                 return;
             }
 
-            // var product = new BrosShopProduct
-            // {
-            //     BrosShopTitle = name,
-            //     BrosShopPurcharesePrice = purchasePrice,
-            //     BrosShopPrice = salePrice,
-            //     BrosShopCategoryTitle = category,
-            //     BrosShopWbArticul = wbArticul,
-            //     BrosShopDescription = description
-            // };
+            var product = new BrosShopProduct
+            {
+                BrosShopTitle = name,
+                BrosShopPurcharesePrice = purchasePrice,
+                BrosShopPrice = salePrice,
+                BrosShopCategoryId = category,
+                BrosShopDescription = description,
+                BrosShopWbarticul = wbArticul,
+                BrosShopDiscountPercent = 0
+            };
 
 
             // После успешного сохранения
             MessageBox.Show("Изменения успешно сохранены!");
 
             // Деактивируем кнопку "Сохранить изменения" и активируем кнопку "Редактировать"
-            saveProductButton.IsEnabled = false;
-            editProductButton.IsEnabled = true;
+            saveProductButton.Visibility = Visibility.Hidden;
+            editProductButton.Visibility = Visibility.Visible;
 
             // Запрещаем редактирование полей
             nameProductTextBox.IsReadOnly = true;

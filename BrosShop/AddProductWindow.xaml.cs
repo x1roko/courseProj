@@ -9,6 +9,9 @@ using System.Windows.Media.Imaging;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
+using System.Net.Http.Headers;
 
 namespace BrosShop
 {
@@ -17,52 +20,76 @@ namespace BrosShop
     /// </summary>
     public partial class AddProductWindow : Window
     {
-        private HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
         public AddProductWindow()
         {
             InitializeComponent();
             LoadWindowAsync();
-        } 
-
-        public async void LoadWindowAsync()
-        {
-            //await LoadCategoriesAsync();
         }
 
         public async Task LoadCategoriesAsync()
         {
+            using BrosShopDbContext context = new();
 
-            /*using BrosShopDbContext context = new();
             var categoriesQuery = context.BrosShopCategories.ToList();
 
             foreach (var category in categoriesQuery)
             {
-                //categoryComboBox.Items.Add(new ComboBoxItem
+                categoryComboBox.Items.Add(new ComboBoxItem
                 {
                     Content = category.BrosShopCategoryTitle,
                     Tag = category.BrosShopCategoryId
                 });
             }
-            categoryComboBox.SelectedIndex = 0;*/
         }
 
-        private void AddProductButton_Click(object sender, RoutedEventArgs e)
+        public async Task LoadWindowAsync()
         {
-            BrosShopProduct product = new()
+            await LoadCategoriesAsync();
+        }
+
+        private async void SaveProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Получаем данные из текстовых полей
+            string name = nameProductTextBox.Text;
+            decimal purchasePrice;
+            decimal salePrice;
+            int category = 0;
+            if (categoryCheckBox.IsChecked.Value)
+                category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
+            Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
+            string description = descriptionProductTextBox.Text;
+
+            // Проверяем, что цены корректные
+            if (!decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePrice))
             {
-                //
-            };
-            using BrosShopDbContext context = new();
-            context.BrosShopProducts.Add(product);
-            context.SaveChanges();
-            MessageBox.Show($"Товар {product.BrosShopTitle} добавлен");
-            Close();
-        }
+                MessageBox.Show("Некорректная закупочная цена.");
+                return;
+            }
 
-        private void CategoryCheckBox_ChangeChecked(object sender, RoutedEventArgs e)
-        {
-            bool isChecked = categoryCheckBox.IsChecked ?? false;
-            categoryTextBlock.Visibility = isChecked ? Visibility.Collapsed : Visibility.Visible;
+            if (!decimal.TryParse(priceProductTextBox.Text, out salePrice))
+            {
+                MessageBox.Show("Некорректная цена продажи.");
+                return;
+            }
+
+            var product = new BrosShopProduct
+            {
+                BrosShopTitle = name,
+                BrosShopPurcharesePrice = purchasePrice,
+                BrosShopPrice = salePrice,
+                BrosShopCategoryId = category,
+                BrosShopDescription = description,
+                BrosShopWbarticul = wbArticul,
+                BrosShopDiscountPercent = 0
+            };
+
+            using var context = new BrosShopDbContext();
+            await context.BrosShopProducts.AddAsync(product);
+
+            // После успешного сохранения
+            MessageBox.Show("Изменения успешно сохранены!");
+            Close();
         }
 
         private void PriceProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -71,30 +98,37 @@ namespace BrosShop
             {
                 priceProductTextBox.Style = (Style)FindResource(typeof(TextBox));
                 purcharesePriceProductTextBox.Style = (Style)FindResource(typeof(TextBox));
-                if (priceProductTextBox.Text.Length > 0 && purcharesePriceProductTextBox.Text.Length > 0)
+                decimal priceProduct, purchasePriceProduct;
+                bool isValidPrice = decimal.TryParse(priceProductTextBox.Text, out priceProduct);
+                bool isValidPurchasePrice = decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePriceProduct);
+                if (isValidPrice && isValidPurchasePrice)
                 {
-                    decimal priceProduct, purchasePriceProduct;
-                    bool isValidPrice = decimal.TryParse(priceProductTextBox.Text, out priceProduct);
-                    bool isValidPurchasePrice = decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePriceProduct);
-                    if (isValidPrice && isValidPurchasePrice)
-                    {
-                        profitTextBlock.Text = $"Прибыль с 1 штуки: {priceProduct - purchasePriceProduct}";
-                        return;
-                    }
-                    if (!isValidPrice)
-                    {
-                        priceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
-                    }
-                    if (!isValidPurchasePrice)
-                    {
-                        purcharesePriceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
-                    }
+                    profitTextBlock.Text = $"Прибыль с 1 штуки: {priceProduct - purchasePriceProduct}";
+                    return;
+                }
+                if (!isValidPrice)
+                {
+                    priceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
+                }
+                if (!isValidPurchasePrice)
+                {
+                    purcharesePriceProductTextBox.Style = (Style)FindResource("ErrorTextBox");
                 }
             }
             catch (Exception)
             {
                 MessageBox.Show("Пожалуйста введите корректные значения для цены");
             }
+        }
+
+        private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (categoryCheckBox.IsChecked.HasValue)
+            {
+                categoryComboBox.Visibility = Visibility.Collapsed;
+                return;
+            }
+            categoryComboBox.Visibility = Visibility.Visible;
         }
     }
 }
