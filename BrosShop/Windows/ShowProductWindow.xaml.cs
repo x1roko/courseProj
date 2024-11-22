@@ -1,25 +1,16 @@
 ﻿using BrosShop.Models;
+using BrosShop.Serveces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BrosShop
 {
@@ -28,14 +19,16 @@ namespace BrosShop
     /// </summary>
     public partial class ShowProductWindow : Window
     {
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
+        private readonly ImageService _imageService;
         public ShowProductWindow(int productId)
         {
             InitializeComponent();
-            _configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+            //_configuration = new ConfigurationBuilder()
+            //.SetBasePath(Directory.GetCurrentDirectory())
+            //.AddJsonFile("appsettings.json")
+            //.Build();
+            _imageService = new ImageService();
             LoadWindowAsync(productId);
             LoadCategoriesAsync(productId);
         }
@@ -150,7 +143,7 @@ namespace BrosShop
                 Int32.TryParse(idTextBlock.Text, out int productId);
                 if (productId == 0)
                     return;
-                var result = await UploadImageAsync(productId, filePath);
+                var result = await _imageService.UploadImageAsync(productId, filePath);//UploadImageAsync(productId, filePath);
                 MessageBox.Show(result != 0 ? "Изображение загруженно" : "Изображение не загруженно");
                 AddImagesStackPanel(result);
             }
@@ -162,7 +155,7 @@ namespace BrosShop
             {
                 Width = 50,
                 Height = 50,
-                Source = await LoadImageAsync(imageId),
+                Source = await _imageService.LoadImageAsync(imageId)
             };
 
             // Добавляем обработчик события MouseDown
@@ -191,56 +184,7 @@ namespace BrosShop
                 // Если StackPanel пуст, просто добавляем новое изображение
                 imagesStackPanel.Children.Add(image);
             }
-        }
-
-        private async Task<int> UploadImageAsync(int productId, string filePath)
-        {
-            var _httpClient = new HttpClient();
-            using (var form = new MultipartFormDataContent())
-            {
-                var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg"); // Убедитесь, что тип контента соответствует вашему файлу
-
-                form.Add(fileContent, "file", System.IO.Path.GetFileName(filePath));
-                var apiString = _configuration["ApiSettings:BaseUrl"];
-                var response = await _httpClient.PostAsync($"{apiString}?productId={productId}", form);
-                if (response.IsSuccessStatusCode)
-                {
-                    // Чтение содержимого ответа
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-
-                    // Десериализация JSON в объект BrosShopImage
-                    var brosShopImage = JsonConvert.DeserializeObject<BrosShopImage>(jsonResponse);
-
-                    // Получение imageId
-                    var imageId = brosShopImage.BrosShopImagesId;
-                    return imageId; // или используйте его по вашему усмотрению
-                }
-                return 0;
-            }
-        }
-
-        public async Task<BitmapImage> LoadImageAsync(int imageId)
-        {
-            var apiString = _configuration["ApiSettings:BaseUrl"];
-            var _httpClient = new HttpClient();
-            var response = await _httpClient.GetAsync($"{apiString}{imageId}");
-            if (response.IsSuccessStatusCode)
-            {
-                var imageBytes = await response.Content.ReadAsByteArrayAsync();
-                var bitmapImage = new BitmapImage();
-                using (var stream = new MemoryStream(imageBytes))
-                {
-                    bitmapImage.BeginInit();
-                    bitmapImage.StreamSource = stream;
-                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapImage.EndInit();
-                    bitmapImage.Freeze(); // Замораживаем изображение для использования в разных потоках
-                }
-                return bitmapImage;
-            }
-            return null;
+            selectedImageProduct.Source = image.Source;
         }
 
         private void EditProductButton_Click(object sender, RoutedEventArgs e)
@@ -266,7 +210,7 @@ namespace BrosShop
             decimal salePrice;
             int category = 0;
             if (categoryCheckBox.IsChecked.Value)
-                 category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
+                category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
             Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
             string description = descriptionProductTextBox.Text;
 

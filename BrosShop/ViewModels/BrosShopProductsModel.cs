@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrosShop
+namespace BrosShop.ViewModels
 {
     public class BrosShopProductsModel
     {
@@ -17,7 +17,7 @@ namespace BrosShop
 
         public decimal BrosShopDiscountPrice { get; set; }
 
-        public decimal BrosShopProfit {  get; set; }
+        public decimal BrosShopProfit { get; set; }
 
         public string BrosShopTitle { get; set; } = null!;
 
@@ -27,5 +27,6 @@ namespace BrosShop
 
         public int? BrosShopAttributeId { get; set; }
         public int BrosShopCount { get; set; }
+        public string ImageURL { get; set; }
     }
 }

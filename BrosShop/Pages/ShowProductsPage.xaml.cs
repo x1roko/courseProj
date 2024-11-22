@@ -1,20 +1,10 @@
 ﻿using BrosShop.Models;
+using BrosShop.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using MySqlConnector;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BrosShop
 {
@@ -63,11 +53,13 @@ namespace BrosShop
             var products = await context.BrosShopProducts
                 .AsNoTracking()
                 .Include(p => p.BrosShopProductAttributes)
+                .Include(p => p.BrosShopImages)
                 .Where(p => activeCategoryIds.Contains(p.BrosShopCategory.BrosShopCategoryId))
                 .Skip((_currentPage - 1) * _pageSize)
                 .Take(_pageSize)
                 .Select(p => new BrosShopProductsModel
                 {
+                    ImageURL = p.BrosShopImages.FirstOrDefault().BrosShopImageTitle,
                     BrosShopProductId = p.BrosShopProductId,
                     BrosShopTitle = p.BrosShopTitle,
                     BrosShopPrice = p.BrosShopPrice,
@@ -148,7 +140,7 @@ namespace BrosShop
             Button button = sender as Button;
 
             // Получаем контекст данных, связанный с кнопкой
-            var product = button.DataContext as BrosShopProductsModel; 
+            var product = button.DataContext as BrosShopProductsModel;
 
             if (product != null)
             {

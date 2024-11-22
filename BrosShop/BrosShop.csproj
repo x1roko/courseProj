@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Remove="Styles\Styles.xaml" />
+    <Page Remove="Styles\DarkTheme.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Styles\Styles.xaml" />
+    <Resource Include="Styles\DarkTheme.xaml" />
   </ItemGroup>
 
   <ItemGroup>
