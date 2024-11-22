@@ -23,7 +23,7 @@
             </Grid.RowDefinitions>
 
             <!-- Изображение товара -->
-            <Image x:Name="mainImageProduct" Width="300" Height="300" Grid.Row="0" Margin="10"/>
+            <Image x:Name="selectedImageProduct" Width="300" Height="300" Grid.Row="0" Margin="10"/>
 
             <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
                 <TextBlock x:Name="idTextBlock"/>

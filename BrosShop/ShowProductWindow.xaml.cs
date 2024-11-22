@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -88,28 +89,17 @@ namespace BrosShop
                     descriptionProductTextBox.Text = product.BrosShopDescription;
                     wbArticulProductTextBox.Text = product.BrosShopWbarticul.ToString();
 
-                    // Загружаем изображение
-                    var image = product.BrosShopImages.FirstOrDefault();
-                    if (image != null)
-                    {
-                        mainImageProduct.Source = await LoadImageAsync(image.BrosShopImagesId);
-                    }
 
                     // Загружаем дополнительные изображения
-                    var images = product.BrosShopImages;
+                    var images = product.BrosShopImages.OrderBy(i => i.BrosShopImagesId);
                     if (images != null)
                     {
                         foreach (var imageInCollection in images)
                         {
-                            imagesStackPanel.Children.Add(
-                                new Image
-                                {
-                                    Width = 50,
-                                    Height = 50,
-                                    Source = await LoadImageAsync(imageInCollection.BrosShopImagesId)
-                                });
+                            AddImagesStackPanel(imageInCollection.BrosShopImagesId);
                         }
                     }
+
                     var uploadButton = new Button
                     {
                         Content = "+",
@@ -126,13 +116,23 @@ namespace BrosShop
                 else
                 {
                     nameProductTextBox.Text = "Продукт не найден";
-                    mainImageProduct.Source = null; // Или установить изображение по умолчанию
+                    selectedImageProduct.Source = null; // Или установить изображение по умолчанию
                 }
             }
             catch (Exception ex)
             {
                 // Логирование ошибки или отображение сообщения пользователю
                 MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}");
+            }
+        }
+
+        private void ChangeSelectedImageInStackPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var clickedImage = sender as Image;
+            if (clickedImage != null)
+            {
+                // Здесь вы можете заменить основное изображение
+                selectedImageProduct.Source = clickedImage.Source;
             }
         }
 
@@ -151,13 +151,50 @@ namespace BrosShop
                 if (productId == 0)
                     return;
                 var result = await UploadImageAsync(productId, filePath);
-                MessageBox.Show(result ? "Изображение загруженно" : "Изображение не загруженно");
+                MessageBox.Show(result != 0 ? "Изображение загруженно" : "Изображение не загруженно");
+                AddImagesStackPanel(result);
             }
         }
 
-        private async Task<bool> UploadImageAsync(int productId, string filePath)
+        private async void AddImagesStackPanel(int imageId)
         {
+            var image = new Image
+            {
+                Width = 50,
+                Height = 50,
+                Source = await LoadImageAsync(imageId),
+            };
 
+            // Добавляем обработчик события MouseDown
+            image.MouseDown += ChangeSelectedImageInStackPanel_MouseDown;
+
+            // Проверяем, есть ли уже элементы в StackPanel
+            if (imagesStackPanel.Children.Count > 0)
+            {
+                // Получаем последний элемент
+                var lastElement = imagesStackPanel.Children[imagesStackPanel.Children.Count - 1];
+
+                // Проверяем, является ли последний элемент кнопкой
+                if (lastElement is Button)
+                {
+                    // Вставляем новое изображение перед последним элементом
+                    imagesStackPanel.Children.Insert(imagesStackPanel.Children.Count - 1, image);
+                }
+                else
+                {
+                    // Если последний элемент не кнопка, просто добавляем новое изображение в конец
+                    imagesStackPanel.Children.Add(image);
+                }
+            }
+            else
+            {
+                // Если StackPanel пуст, просто добавляем новое изображение
+                imagesStackPanel.Children.Add(image);
+            }
+        }
+
+        private async Task<int> UploadImageAsync(int productId, string filePath)
+        {
             var _httpClient = new HttpClient();
             using (var form = new MultipartFormDataContent())
             {
@@ -168,7 +205,19 @@ namespace BrosShop
                 form.Add(fileContent, "file", System.IO.Path.GetFileName(filePath));
                 var apiString = _configuration["ApiSettings:BaseUrl"];
                 var response = await _httpClient.PostAsync($"{apiString}?productId={productId}", form);
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    // Чтение содержимого ответа
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    // Десериализация JSON в объект BrosShopImage
+                    var brosShopImage = JsonConvert.DeserializeObject<BrosShopImage>(jsonResponse);
+
+                    // Получение imageId
+                    var imageId = brosShopImage.BrosShopImagesId;
+                    return imageId; // или используйте его по вашему усмотрению
+                }
+                return 0;
             }
         }
 
@@ -234,17 +283,22 @@ namespace BrosShop
                 return;
             }
 
-            var product = new BrosShopProduct
-            {
-                BrosShopTitle = name,
-                BrosShopPurcharesePrice = purchasePrice,
-                BrosShopPrice = salePrice,
-                BrosShopCategoryId = category,
-                BrosShopDescription = description,
-                BrosShopWbarticul = wbArticul,
-                BrosShopDiscountPercent = 0
-            };
+            Int32.TryParse(idTextBlock.Text, out int id);
 
+            using var context = new BrosShopDbContext();
+
+            var product = context.BrosShopProducts.Find(id);
+
+            product.BrosShopTitle = name;
+            product.BrosShopPurcharesePrice = purchasePrice;
+            product.BrosShopPrice = salePrice;
+            if (category != 0)
+                product.BrosShopCategoryId = category;
+            product.BrosShopDescription = description;
+            product.BrosShopWbarticul = wbArticul;
+            product.BrosShopDiscountPercent = 0;
+
+            context.SaveChanges();
 
             // После успешного сохранения
             MessageBox.Show("Изменения успешно сохранены!");
