@@ -23,5 +23,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button x:Name="addCategoryButton" Content="Добавить категорию" Click="AddCategoryButton_Click"/>
     </StackPanel>
 </Page>

@@ -42,5 +42,10 @@ namespace BrosShop.Pages
 
             categoriesListView.ItemsSource = categories;
         }
+
+        private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
