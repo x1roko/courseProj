@@ -38,13 +38,6 @@
             <ListView x:Name="productsListView" MouseDoubleClick="ProductsListView_MouseDoubleClick">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Image/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
                         <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopProductId}"/>
                         <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
                         <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>

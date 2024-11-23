@@ -1,4 +1,5 @@
 ﻿using BrosShop.Models;
+using BrosShop.Serveces;
 using BrosShop.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
@@ -14,16 +15,18 @@ namespace BrosShop
     public partial class ShowProductsPage : Page
     {
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
+        private readonly ImageService _imageService;
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 10; // Количество элементов на странице
 
         public ShowProductsPage()
         {
             InitializeComponent();
+            _imageService = new ImageService();
             LoadPageAsync();
         }
 
-        private async Task LoadPageAsync()
+        private async void LoadPageAsync()
         {
             await LoadCategoriesAsync();
             await LoadProductsAsync();
@@ -59,7 +62,6 @@ namespace BrosShop
                 .Take(_pageSize)
                 .Select(p => new BrosShopProductsModel
                 {
-                    ImageURL = p.BrosShopImages.FirstOrDefault().BrosShopImageTitle,
                     BrosShopProductId = p.BrosShopProductId,
                     BrosShopTitle = p.BrosShopTitle,
                     BrosShopPrice = p.BrosShopPrice,
@@ -70,8 +72,7 @@ namespace BrosShop
                     BrosShopCategoryTitle = p.BrosShopCategory.BrosShopCategoryTitle,
                     BrosShopAttributeId = p.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
                     BrosShopCount = p.BrosShopProductAttributes.Count
-                })
-                .ToListAsync();
+                }).ToListAsync();
 
             productsListView.ItemsSource = products;
         }
@@ -132,21 +133,6 @@ namespace BrosShop
         private void UpdateCurrentPageDisplay()
         {
             currentPageTextBlock.Text = $"{_currentPage}";
-        }
-
-        private void ShowProductButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Получаем кнопку, которая вызвала событие
-            Button button = sender as Button;
-
-            // Получаем контекст данных, связанный с кнопкой
-            var product = button.DataContext as BrosShopProductsModel;
-
-            if (product != null)
-            {
-                new ShowProductWindow(product.BrosShopProductId).Show();
-
-            }
         }
 
         private void ProductsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

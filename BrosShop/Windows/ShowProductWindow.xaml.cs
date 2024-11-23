@@ -19,15 +19,10 @@ namespace BrosShop
     /// </summary>
     public partial class ShowProductWindow : Window
     {
-        //private readonly IConfiguration _configuration;
         private readonly ImageService _imageService;
         public ShowProductWindow(int productId)
         {
             InitializeComponent();
-            //_configuration = new ConfigurationBuilder()
-            //.SetBasePath(Directory.GetCurrentDirectory())
-            //.AddJsonFile("appsettings.json")
-            //.Build();
             _imageService = new ImageService();
             LoadWindowAsync(productId);
             LoadCategoriesAsync(productId);
@@ -143,7 +138,7 @@ namespace BrosShop
                 Int32.TryParse(idTextBlock.Text, out int productId);
                 if (productId == 0)
                     return;
-                var result = await _imageService.UploadImageAsync(productId, filePath);//UploadImageAsync(productId, filePath);
+                var result = await _imageService.UploadImageAsync(productId, filePath);
                 MessageBox.Show(result != 0 ? "Изображение загруженно" : "Изображение не загруженно");
                 AddImagesStackPanel(result);
             }

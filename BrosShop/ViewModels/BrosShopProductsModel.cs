@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace BrosShop.ViewModels
 {
@@ -27,6 +28,5 @@ namespace BrosShop.ViewModels
 
         public int? BrosShopAttributeId { get; set; }
         public int BrosShopCount { get; set; }
-        public string ImageURL { get; set; }
     }
 }
