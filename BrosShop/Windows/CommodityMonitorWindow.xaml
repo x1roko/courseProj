@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
         Title="Товарный монитор"
-        WindowState="Maximized"
-        Background="#FF1A1A2E">
+        WindowState="Maximized">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/LightTheme.xaml"/>
                 <ResourceDictionary Source="../Styles/DarkTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -29,10 +29,10 @@
                 <TabItem Header="Категории" Name="CategoryTabItem"/>
                 <TabItem Header="Клиенты" Name="ClientsTabItem"/>
             </TabControl>
-            <!--<ComboBox x:Name="ThemeSelector" SelectionChanged="ThemeSelector_SelectionChanged" Width="150" Margin="10">
+            <ComboBox x:Name="ThemeSelector" SelectionChanged="ThemeSelector_SelectionChanged"  Width="150" Margin="10">
                 <ComboBoxItem Content="Светлая тема" Tag="LightTheme"/>
-                <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme" IsSelected="True"/>
-            </ComboBox>-->
+                <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme"/>
+            </ComboBox>
         </StackPanel>
         <Grid Grid.Row="1">
             <Frame Name="mainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden"/>

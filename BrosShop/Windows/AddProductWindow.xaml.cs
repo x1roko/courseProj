@@ -18,13 +18,14 @@ namespace BrosShop
     /// <summary>
     /// Логика взаимодействия для AddProductWindow.xaml
     /// </summary>
-    public partial class AddProductWindow : Window
+    public partial class AddProductWindow : Window, IThemeable
     {
         private readonly IConfiguration _configuration;
         public AddProductWindow()
         {
             InitializeComponent();
             LoadWindowAsync();
+            ApplyTheme();
         }
 
         public async Task LoadCategoriesAsync()
@@ -129,6 +130,20 @@ namespace BrosShop
                 return;
             }
             categoryComboBox.Visibility = Visibility.Visible;
+        }
+
+        public void ApplyTheme()
+        {
+            Resources.MergedDictionaries.Clear();
+
+            ResourceDictionary lightTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/LightTheme.xaml", UriKind.Relative));
+            ResourceDictionary darkTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/DarkTheme.xaml", UriKind.Relative));
+
+            if (Properties.Settings.Default.isDarkTheme)
+                Resources.MergedDictionaries.Add(darkTheme);
+            else
+                Resources.MergedDictionaries.Add(lightTheme);
+            Background = (Brush)Resources["WindowBackground"];
         }
     }
 }

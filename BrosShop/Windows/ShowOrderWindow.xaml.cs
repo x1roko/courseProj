@@ -1,5 +1,4 @@
-﻿using BrosShop.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,21 +15,13 @@ using System.Windows.Shapes;
 namespace BrosShop.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для AddCategoryWindow.xaml
+    /// Логика взаимодействия для ShowOrderWindow.xaml
     /// </summary>
-    public partial class AddCategoryWindow : Window, IThemeable
+    public partial class ShowOrderWindow : Window, IThemeable
     {
-        public AddCategoryWindow()
+        public ShowOrderWindow()
         {
             InitializeComponent();
-            ApplyTheme();
-        }
-
-        private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
-        {
-            using var context = new BrosShopDbContext();
-            if (nameCategoryTextBox.Text.Length > 0)
-                await context.BrosShopCategories.AddAsync(new BrosShopCategory { BrosShopCategoryTitle = nameCategoryTextBox.Text});
         }
 
         public void ApplyTheme()

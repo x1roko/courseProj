@@ -5,14 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="InteractionWithOrders">
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Styles/DarkTheme.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
+        Title="Заказы:">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -22,7 +15,6 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
-                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
                     <GridViewColumn Header="Дата заказа" DisplayMemberBinding="{Binding BrosShopDateTimeOrder}"/>
                     <GridViewColumn Header="Тип заказа" DisplayMemberBinding="{Binding BrosShopTypeOrder}"/>
                 </GridView>
@@ -31,9 +23,9 @@
         <StackPanel Grid.Column="1">
             <TextBlock Text="Отображать заказы из:"/>
             <StackPanel x:Name="paymentOrders">
-                <CheckBox x:Name="cassaCheckBox" Content="Касса" Checked="TypeOrderCheckBox_Checked"/>
-                <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked"/>
-                <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked"/>
+                <CheckBox x:Name="cassaCheckBox" Content="Касса" Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
+                <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
+                <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
             </StackPanel>
             <TextBlock x:Name="showProfitTextBlock"/>
             <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged"/>

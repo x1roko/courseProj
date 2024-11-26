@@ -15,14 +15,12 @@ namespace BrosShop
     public partial class ShowProductsPage : Page
     {
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
-        private readonly ImageService _imageService;
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 10; // Количество элементов на странице
 
         public ShowProductsPage()
         {
             InitializeComponent();
-            _imageService = new ImageService();
             LoadPageAsync();
         }
 

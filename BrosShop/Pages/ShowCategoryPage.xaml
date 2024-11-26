@@ -5,15 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:BrosShop.Pages"
       mc:Ignorable="d"
-      Title="ShowCategoryPage">
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Styles/DarkTheme.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
-
+      Title="Категории:">
     <StackPanel>
         <ListView x:Name="categoriesListView">
             <ListView.View>

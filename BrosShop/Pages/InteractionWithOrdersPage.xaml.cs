@@ -10,7 +10,6 @@ namespace BrosShop
     /// </summary>
     public partial class InteractionWithOrdersPage : Page
     {
-
         public InteractionWithOrdersPage()
         {
             InitializeComponent();
@@ -23,23 +22,40 @@ namespace BrosShop
             cassaCheckBox.IsChecked = true;
             siteCheckBox.IsChecked = true;
             await CalculateTurnoverAndProfitAsync();
-            LoadOrders();
+            await LoadOrders();
         }
 
-        public void LoadOrders()
+        public async Task LoadOrders()
         {
             try
             {
-                BrosShopDbContext context = new();
-                List<BrosShopOrder> orders = [];
-                if (wbCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "WB"));
-                if (cassaCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "касса"));
-                if (siteCheckBox.IsChecked.HasValue)
-                    orders.AddRange(context.BrosShopOrders.Include(o => o.BrosShopUser).Where(o => o.BrosShopTypeOrder == "веб-сайт"));
-                orders.OrderBy(o => o.BrosShopOrderId);
-                ordersListView.ItemsSource = orders;//.Select(new {});
+                using BrosShopDbContext context = new();
+
+                List<string> activeTypes = new List<string>();
+
+                if (wbCheckBox.IsChecked == true) 
+                    activeTypes.Add("WB");
+                if (cassaCheckBox.IsChecked == true) 
+                    activeTypes.Add("касса");
+                if (siteCheckBox.IsChecked == true)
+                    activeTypes.Add("веб-сайт");
+
+                // Получаем все заказы из базы данных
+                var allOrders = await context.BrosShopOrders.AsNoTracking().ToListAsync();
+
+                // Создаем новый список для хранения отфильтрованных заказов
+                List<BrosShopOrder> filteredOrders = new List<BrosShopOrder>();
+
+                foreach (var order in allOrders)
+                {
+                    // Проверяем, содержит ли BrosShopTypeOrder хотя бы один из активных типов
+                    if (order.BrosShopTypeOrder != null && activeTypes.Any(type => order.BrosShopTypeOrder.Contains(type)))
+                    {
+                        filteredOrders.Add(order);
+                    }
+                }
+
+                ordersListView.ItemsSource = filteredOrders;
             }
             catch (Exception)
             {
@@ -47,9 +63,9 @@ namespace BrosShop
             }
         }
 
-        private void TypeOrderCheckBox_Checked(object sender, RoutedEventArgs e)
+        private async void TypeOrderCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            LoadOrders();
+            await LoadOrders();
         }
 
         private async Task CalculateTurnoverAndProfitAsync()

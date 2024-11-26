@@ -6,15 +6,7 @@
       xmlns:local="clr-namespace:BrosShop.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ShowClientsPage">
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Styles/DarkTheme.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
-    
+      Title="Клиенты:">
     <StackPanel>
         <ListView x:Name="clientsListView">
             <ListView.View>

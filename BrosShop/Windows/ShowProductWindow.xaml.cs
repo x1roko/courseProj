@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace BrosShop
@@ -17,7 +18,7 @@ namespace BrosShop
     /// <summary>
     /// Логика взаимодействия для ShowProductWindow.xaml
     /// </summary>
-    public partial class ShowProductWindow : Window
+    public partial class ShowProductWindow : Window, IThemeable
     {
         private readonly ImageService _imageService;
         public ShowProductWindow(int productId)
@@ -26,6 +27,7 @@ namespace BrosShop
             _imageService = new ImageService();
             LoadWindowAsync(productId);
             LoadCategoriesAsync(productId);
+            ApplyTheme();
         }
 
         public async Task LoadCategoriesAsync(int productId)
@@ -293,6 +295,20 @@ namespace BrosShop
                 return;
             }
             categoryComboBox.Visibility = Visibility.Visible;
+        }
+
+        public void ApplyTheme()
+        {
+            Resources.MergedDictionaries.Clear();
+
+            ResourceDictionary lightTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/LightTheme.xaml", UriKind.Relative));
+            ResourceDictionary darkTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/DarkTheme.xaml", UriKind.Relative));
+
+            if (Properties.Settings.Default.isDarkTheme)
+                Resources.MergedDictionaries.Add(darkTheme);
+            else
+                Resources.MergedDictionaries.Add(lightTheme);
+            Background = (Brush)Resources["WindowBackground"];
         }
     }
 }
