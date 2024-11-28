@@ -1,4 +1,6 @@
 ﻿using BrosShop.Models;
+using BrosShop.ViewModels;
+using BrosShop.Windows;
 using Microsoft.EntityFrameworkCore;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,20 +33,17 @@ namespace BrosShop
             {
                 using BrosShopDbContext context = new();
 
-                List<string> activeTypes = new List<string>();
+                var activeTypes = new HashSet<string>();
 
-                if (wbCheckBox.IsChecked == true) 
-                    activeTypes.Add("WB");
-                if (cassaCheckBox.IsChecked == true) 
-                    activeTypes.Add("касса");
-                if (siteCheckBox.IsChecked == true)
-                    activeTypes.Add("веб-сайт");
+                if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
+                if (cassaCheckBox.IsChecked == true) activeTypes.Add("касса");
+                if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
 
                 // Получаем все заказы из базы данных
                 var allOrders = await context.BrosShopOrders.AsNoTracking().ToListAsync();
 
                 // Создаем новый список для хранения отфильтрованных заказов
-                List<BrosShopOrder> filteredOrders = new List<BrosShopOrder>();
+                List<BrosShopOrder> filteredOrders = [];
 
                 foreach (var order in allOrders)
                 {
@@ -117,9 +116,19 @@ namespace BrosShop
             showProfitTextBlock.Text = $"За {mainCalendar.SelectedDate.Value.Date} оборот составил {turnover}\n, а прибыль {profit}";
         }
 
-        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        private async void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
-            CalculateTurnoverAndProfitAsync();
+            await CalculateTurnoverAndProfitAsync();
+        }
+
+        private void OrdersListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var selectedOrder = ordersListView.SelectedItem as BrosShopOrder;
+
+            if (selectedOrder != null)
+            {
+                new ShowOrderWindow(selectedOrder.BrosShopOrderId).Show();
+            }
         }
     }
 }

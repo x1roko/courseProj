@@ -37,7 +37,7 @@
                 <ComboBox x:Name="categoryComboBox" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Артикул товара на WB:"/>
-                <TextBox x:Name="wbArticulProductTextBox" Margin="0,0,0,10" TextChanged="PriceProductTextBox_TextChanged"/>
+                <TextBox x:Name="wbArticulProductTextBox" Margin="0,0,0,10"/>
 
                 <TextBlock Text="Закупочная стоимость 1 штуки:"/>
                 <TextBox x:Name="purcharesePriceProductTextBox" Margin="0,0,0,10" TextChanged="PriceProductTextBox_TextChanged"/>
@@ -51,7 +51,7 @@
             <!-- Описание -->
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="10">
                 <TextBlock Text="Описание:"/>
-                <TextBox x:Name="descriptionProductTextBox" AcceptsReturn="True" Height="100" IsReadOnly="True" Margin="0,0,0,10"/>
+                <TextBox x:Name="descriptionProductTextBox" AcceptsReturn="True" Height="100" Margin="0,0,0,10"/>
             </StackPanel>
 
             <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">

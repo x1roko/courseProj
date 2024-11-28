@@ -27,7 +27,7 @@ namespace BrosShop
         private async void LoadPageAsync()
         {
             await LoadCategoriesAsync();
-            await LoadProductsAsync();
+            await LoadAllProductsAsync();
             UpdateCurrentPageDisplay();
             nextButton.Content = "->";
             previousButton.Content = "<-";
@@ -40,6 +40,33 @@ namespace BrosShop
                 return Math.Round(price * (1 - discountPercent.Value / 100m), 2);
             }
             return Math.Round(price, 2);
+        }
+
+        public async Task LoadAllProductsAsync()
+        {
+            using var context = new BrosShopDbContext();
+
+            var products = await context.BrosShopProducts
+                .AsNoTracking()
+                .Include(p => p.BrosShopProductAttributes)
+                .Include(p => p.BrosShopImages)
+                .Skip((_currentPage - 1) * _pageSize)
+                .Take(_pageSize)
+                .Select(p => new BrosShopProductsModel
+                {
+                    BrosShopProductId = p.BrosShopProductId,
+                    BrosShopTitle = p.BrosShopTitle,
+                    BrosShopPrice = p.BrosShopPrice,
+                    BrosShopDiscountPercent = p.BrosShopDiscountPercent,
+                    BrosShopDiscountPrice = GetDiscountPrice(p.BrosShopPrice, p.BrosShopDiscountPercent),
+                    BrosShopPurcharesePrice = p.BrosShopPurcharesePrice,
+                    BrosShopProfit = GetDiscountPrice(p.BrosShopPrice, p.BrosShopDiscountPercent) - p.BrosShopPurcharesePrice,
+                    BrosShopCategoryTitle = p.BrosShopCategory.BrosShopCategoryTitle,
+                    BrosShopAttributeId = p.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
+                    BrosShopCount = p.BrosShopProductAttributes.Count
+                }).ToListAsync();
+
+            productsListView.ItemsSource = products;
         }
 
         public async Task LoadProductsAsync()
@@ -141,6 +168,16 @@ namespace BrosShop
             {
                 new ShowProductWindow(selectedProduct.BrosShopProductId).Show();
             }
+        }
+
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadAllProductsAsync();
+        }
+
+        private async void ShowAllProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadAllProductsAsync();
         }
     }
 }

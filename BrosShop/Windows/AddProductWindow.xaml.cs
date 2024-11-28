@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System.Net.Http.Headers;
+using BrosShop.Styles;
 
 namespace BrosShop
 {
@@ -51,46 +52,54 @@ namespace BrosShop
 
         private async void SaveProductButton_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем данные из текстовых полей
-            string name = nameProductTextBox.Text;
-            decimal purchasePrice;
-            decimal salePrice;
-            int category = 0;
-            if (categoryCheckBox.IsChecked.Value)
-                category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
-            Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
-            string description = descriptionProductTextBox.Text;
-
-            // Проверяем, что цены корректные
-            if (!decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePrice))
+            try
             {
-                MessageBox.Show("Некорректная закупочная цена.");
-                return;
+                // Получаем данные из текстовых полей
+                string name = nameProductTextBox.Text;
+                decimal purchasePrice;
+                decimal salePrice;
+                int category = 0;
+                MessageBox.Show($"{categoryCheckBox.IsChecked.Value}");
+                if (!categoryCheckBox.IsChecked.Value && categoryComboBox.SelectedItem != null)
+                    category = Int32.Parse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString());
+                Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
+                string description = descriptionProductTextBox.Text;
+
+                // Проверяем, что цены корректные
+                if (!decimal.TryParse(purcharesePriceProductTextBox.Text, out purchasePrice))
+                {
+                    MessageBox.Show("Некорректная закупочная цена.");
+                    return;
+                }
+
+                if (!decimal.TryParse(priceProductTextBox.Text, out salePrice))
+                {
+                    MessageBox.Show("Некорректная цена продажи.");
+                    return;
+                }
+
+                var product = new BrosShopProduct
+                {
+                    BrosShopTitle = name,
+                    BrosShopPurcharesePrice = purchasePrice,
+                    BrosShopPrice = salePrice,
+                    BrosShopCategoryId = category == 0 ? null : category,
+                    BrosShopDescription = description,
+                    BrosShopWbarticul = wbArticul,
+                    BrosShopDiscountPercent = 0
+                };
+
+                using var context = new BrosShopDbContext();
+                await context.BrosShopProducts.AddAsync(product);
+                context.SaveChanges();
+                // После успешного сохранения
+                MessageBox.Show("Изменения успешно сохранены!");
+                Close();
             }
-
-            if (!decimal.TryParse(priceProductTextBox.Text, out salePrice))
+            catch (Exception ex) 
             {
-                MessageBox.Show("Некорректная цена продажи.");
-                return;
+                MessageBox.Show($"Произошла ошибка {ex.Message}");
             }
-
-            var product = new BrosShopProduct
-            {
-                BrosShopTitle = name,
-                BrosShopPurcharesePrice = purchasePrice,
-                BrosShopPrice = salePrice,
-                BrosShopCategoryId = category,
-                BrosShopDescription = description,
-                BrosShopWbarticul = wbArticul,
-                BrosShopDiscountPercent = 0
-            };
-
-            using var context = new BrosShopDbContext();
-            await context.BrosShopProducts.AddAsync(product);
-
-            // После успешного сохранения
-            MessageBox.Show("Изменения успешно сохранены!");
-            Close();
         }
 
         private void PriceProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -124,9 +133,9 @@ namespace BrosShop
 
         private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (categoryCheckBox.IsChecked.HasValue)
+            if (categoryCheckBox.IsChecked.Value)
             {
-                categoryComboBox.Visibility = Visibility.Collapsed;
+                categoryComboBox.Visibility = Visibility.Hidden;
                 return;
             }
             categoryComboBox.Visibility = Visibility.Visible;

@@ -5,8 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop.Windows"
         mc:Ignorable="d"
-        Title="ShowOrderWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="ShowOrderWindow" Height="550" Width="800">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/DarkTheme.xaml"/>
+                <ResourceDictionary Source="../Styles/LightTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <ScrollViewer>
+        <ListView x:Name="productsInOrderListView">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopProductId}"/>
+                    <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
+                    <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
+                    <GridViewColumn Header="Цена продажи" DisplayMemberBinding="{Binding BrosShopPrice}" />
+                    <GridViewColumn Header="Прибыль" DisplayMemberBinding="{Binding BrosShopProfit}" />
+                    <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </ScrollViewer>
 </Window>

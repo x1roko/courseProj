@@ -20,11 +20,13 @@
                     <!-- Для TextBlock с текущей страницей -->
                     <ColumnDefinition Width="Auto"/>
                     <!-- Для кнопки "Вперед" -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="previousButton" Content="Назад" Click="PreviousButton_Click"/>
                 <TextBlock x:Name="currentPageTextBlock" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
                 <Button x:Name="nextButton" Grid.Column="2" Content="Вперед" Click="NextButton_Click"/>
+                <Button x:Name="refreshButton" Grid.Column="3" Content="Обновить" Click="RefreshButton_Click"/>
             </Grid>
 
             <ListView x:Name="productsListView" MouseDoubleClick="ProductsListView_MouseDoubleClick">
@@ -46,6 +48,7 @@
         <Button x:Name="addProductButton" Height="50" Content="Добавить товар" Click="AddProductButton_Click"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1">
+            <Button x:Name="showAllProductsButton" Content="Показать все товары" Click="ShowAllProductsButton_Click"/>
             <ListView x:Name="categoryListView">
                 <ListView.View>
                     <GridView>

@@ -11,6 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BrosShop.Models;
+using BrosShop.Styles;
+using BrosShop.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrosShop.Windows
 {
@@ -19,9 +23,41 @@ namespace BrosShop.Windows
     /// </summary>
     public partial class ShowOrderWindow : Window, IThemeable
     {
-        public ShowOrderWindow()
+        int orderId;
+        public ShowOrderWindow(int id)
         {
             InitializeComponent();
+            orderId = id;
+            LoadWindow();
+        }
+
+        private async Task LoadWindow()
+        {
+            ApplyTheme();
+            await LoadProductsAsync();
+        }
+
+        public async Task LoadProductsAsync()
+        {
+            using var context = new BrosShopDbContext();
+
+            var products = await context.BrosShopOrderCompositions
+                .Include(oc => oc.BrosShopProduct)
+                .Include(oc => oc.BrosShopProduct.BrosShopCategory)
+                .Include(oc => oc.BrosShopProduct.BrosShopProductAttributes)
+                .Where(oc => oc.BrosShopOrderId == orderId)
+                .Select(oc => new BrosShopSaledProducts
+                {
+                    BrosShopProductId = oc.BrosShopProductId,
+                    BrosShopTitle = oc.BrosShopProduct.BrosShopTitle,
+                    BrosShopPrice = oc.BrosShopCost,
+                    BrosShopProfit = oc.BrosShopCost - oc.BrosShopProduct.BrosShopPurcharesePrice,
+                    BrosShopCategoryTitle = oc.BrosShopProduct.BrosShopCategory.BrosShopCategoryTitle,
+                    BrosShopAttributeId = oc.BrosShopProduct.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
+                    BrosShopCount = oc.BrosShopQuantity
+                }).ToListAsync();
+
+            productsInOrderListView.ItemsSource = products;
         }
 
         public void ApplyTheme()

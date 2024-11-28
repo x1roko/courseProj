@@ -1,4 +1,5 @@
 ﻿using BrosShop.Models;
+using BrosShop.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;

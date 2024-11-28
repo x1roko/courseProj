@@ -1,5 +1,6 @@
 ﻿using BrosShop.Models;
 using BrosShop.Serveces;
+using BrosShop.Styles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
@@ -206,8 +207,8 @@ namespace BrosShop
             decimal purchasePrice;
             decimal salePrice;
             int category = 0;
-            if (categoryCheckBox.IsChecked.Value)
-                category = (categoryComboBox.SelectedItem as BrosShopCategory).BrosShopCategoryId;
+            if (!categoryCheckBox.IsChecked.Value)
+                category = Int32.Parse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString());
             Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
             string description = descriptionProductTextBox.Text;
 
@@ -233,8 +234,7 @@ namespace BrosShop
             product.BrosShopTitle = name;
             product.BrosShopPurcharesePrice = purchasePrice;
             product.BrosShopPrice = salePrice;
-            if (category != 0)
-                product.BrosShopCategoryId = category;
+            product.BrosShopCategoryId = category == 0 ? null : category;
             product.BrosShopDescription = description;
             product.BrosShopWbarticul = wbArticul;
             product.BrosShopDiscountPercent = 0;

@@ -11,7 +11,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="ordersListView">
+        <ListView x:Name="ordersListView" MouseDoubleClick="OrdersListView_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
@@ -27,7 +27,9 @@
                 <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
                 <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
             </StackPanel>
-            <TextBlock x:Name="showProfitTextBlock"/>
+            <Border>
+                <TextBlock x:Name="showProfitTextBlock"/>
+            </Border>
             <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged"/>
         </StackPanel>
     </Grid>

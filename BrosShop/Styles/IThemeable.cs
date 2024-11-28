@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrosShop
+namespace BrosShop.Styles
 {
     internal interface IThemeable
     {
