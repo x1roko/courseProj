@@ -34,7 +34,6 @@ namespace BrosShop.Windows
         {
             if (_authService.LoadToken() != null)
             {
-                new CommodityMonitorWindow().ShowDialog();
                 Close();
             }
         }
@@ -63,6 +62,8 @@ namespace BrosShop.Windows
             }
             catch (Exception)
             {
+                loginTextBox.Background = Brushes.Red;
+                passwordTextBox.Background = Brushes.Red;
                 MessageBox.Show("Произошла ошибка");
             }
         }

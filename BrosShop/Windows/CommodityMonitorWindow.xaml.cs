@@ -1,5 +1,7 @@
 ﻿using BrosShop.Pages;
+using BrosShop.Serveces;
 using BrosShop.Styles;
+using BrosShop.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +24,45 @@ namespace BrosShop
     /// </summary>
     public partial class CommodityMonitorWindow : Window, IThemeable
     {
+        private readonly AuthService _authService;
         public CommodityMonitorWindow()
         {
             InitializeComponent();
+            Properties.Settings.Default.Token = null;
+            Properties.Settings.Default.Save();
             ThemeSelector.SelectedIndex = Properties.Settings.Default.isDarkTheme ? 1 : 0;
             ApplyTheme();
+            _authService = new AuthService();
+            CheckTokenAndOpenAuthWindow();
+        }
+
+        private void CheckTokenAndOpenAuthWindow()
+        {
+            if (_authService.LoadToken() == null)
+            {
+                // Открываем окно авторизации
+                var authWindow = new AuthorizateWindow();
+                authWindow.Closed += AuthWindow_Closed; // Подписываемся на событие закрытия
+                authWindow.ShowDialog(); // Открываем окно как модальное
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void AuthWindow_Closed(object sender, System.EventArgs e)
+        {
+            if (_authService.LoadToken() == null)
+            {
+                // Если токена нет, можно закрыть основное окно
+                MessageBox.Show("Не удалось авторизоваться. Приложение будет закрыто.");
+                Close();
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -68,7 +104,7 @@ namespace BrosShop
 
             ResourceDictionary lightTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/LightTheme.xaml", UriKind.Relative));
             ResourceDictionary darkTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/DarkTheme.xaml", UriKind.Relative));
-            
+
             if (Properties.Settings.Default.isDarkTheme)
             {
                 Application.Current.MainWindow.Resources.MergedDictionaries.Add(darkTheme);
