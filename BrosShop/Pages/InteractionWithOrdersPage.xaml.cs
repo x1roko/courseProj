@@ -20,11 +20,30 @@ namespace BrosShop
 
         public async Task LoadPage()
         {
+            await LoadAllOrders();
+            await CalculateTurnoverAndProfitAsync();
             wbCheckBox.IsChecked = true;
             cassaCheckBox.IsChecked = true;
             siteCheckBox.IsChecked = true;
-            await CalculateTurnoverAndProfitAsync();
-            await LoadOrders();
+        }
+
+        public async Task LoadAllOrders()
+        {
+            try
+            {
+                using BrosShopDbContext context = new();
+
+                var activeTypes = new HashSet<string>();
+
+                // Получаем все заказы из базы данных
+                var allOrders = await context.BrosShopOrders.AsNoTracking().ToListAsync(); 
+
+                ordersListView.ItemsSource = allOrders;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Возникла ошибка, проверте доступность сервера");
+            }
         }
 
         public async Task LoadOrders()

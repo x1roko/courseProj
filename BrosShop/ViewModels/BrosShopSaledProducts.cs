@@ -12,6 +12,7 @@ namespace BrosShop.ViewModels
 
         public decimal BrosShopPrice { get; set; }
 
+        public decimal BrosShopTurnover { get; set; }
         public decimal BrosShopProfit { get; set; }
 
         public string BrosShopTitle { get; set; } = null!;

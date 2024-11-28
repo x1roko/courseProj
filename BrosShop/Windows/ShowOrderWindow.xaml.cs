@@ -51,6 +51,7 @@ namespace BrosShop.Windows
                     BrosShopProductId = oc.BrosShopProductId,
                     BrosShopTitle = oc.BrosShopProduct.BrosShopTitle,
                     BrosShopPrice = oc.BrosShopCost,
+                    BrosShopTurnover = oc.BrosShopCost * oc.BrosShopQuantity,
                     BrosShopProfit = oc.BrosShopCost - oc.BrosShopProduct.BrosShopPurcharesePrice,
                     BrosShopCategoryTitle = oc.BrosShopProduct.BrosShopCategory.BrosShopCategoryTitle,
                     BrosShopAttributeId = oc.BrosShopProduct.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),

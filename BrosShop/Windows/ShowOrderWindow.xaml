@@ -22,6 +22,7 @@
                     <GridViewColumn Header="Название" DisplayMemberBinding="{Binding BrosShopTitle}"/>
                     <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
                     <GridViewColumn Header="Цена продажи" DisplayMemberBinding="{Binding BrosShopPrice}" />
+                    <GridViewColumn Header="Оборот" DisplayMemberBinding="{Binding BrosShopTurnover}" />
                     <GridViewColumn Header="Прибыль" DisplayMemberBinding="{Binding BrosShopProfit}" />
                     <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
                 </GridView>
