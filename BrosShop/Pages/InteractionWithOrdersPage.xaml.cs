@@ -15,17 +15,17 @@ namespace BrosShop
         public InteractionWithOrdersPage()
         {
             InitializeComponent();
-            LoadPage();
+            Loaded += InteractionWithOrdersPage_Loaded;
         }
 
-        public async Task LoadPage()
+        private async void InteractionWithOrdersPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadAllOrders();
-            await CalculateTurnoverAndProfitAsync();
-            wbCheckBox.IsChecked = true;
-            cassaCheckBox.IsChecked = true;
-            siteCheckBox.IsChecked = true;
-        }
+			await LoadAllOrders();
+			await CalculateTurnoverAndProfitAsync();
+			wbCheckBox.IsChecked = true;
+			cassaCheckBox.IsChecked = true;
+			siteCheckBox.IsChecked = true;
+		}
 
         public async Task LoadAllOrders()
         {

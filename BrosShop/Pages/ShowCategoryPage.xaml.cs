@@ -25,13 +25,14 @@ namespace BrosShop.Pages
         public ShowCategoryPage()
         {
             InitializeComponent();
-            LoadPage();
+            Loaded += ShowCategoryPage_Loaded;
         }
 
-        private async Task LoadPage()
+        private async void ShowCategoryPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadCategories();
-        }
+
+			await LoadCategories();
+		}
 
         public async Task LoadCategories()
         {

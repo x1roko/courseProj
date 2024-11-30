@@ -21,17 +21,17 @@ namespace BrosShop
         public ShowProductsPage()
         {
             InitializeComponent();
-            LoadPageAsync();
+            Loaded += ShowProductsPage_Loaded;
         }
 
-        private async void LoadPageAsync()
+        private async void ShowProductsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadCategoriesAsync();
-            await LoadAllProductsAsync();
-            UpdateCurrentPageDisplay();
-            nextButton.Content = "->";
-            previousButton.Content = "<-";
-        }
+			await LoadCategoriesAsync();
+			await LoadAllProductsAsync();
+			UpdateCurrentPageDisplay();
+			nextButton.Content = "->";
+			previousButton.Content = "<-";
+		}
 
         public static decimal GetDiscountPrice(decimal price, int? discountPercent)
         {

@@ -28,13 +28,16 @@ namespace BrosShop
         public CommodityMonitorWindow()
         {
             InitializeComponent();
-            Properties.Settings.Default.Token = null;
-            Properties.Settings.Default.Save();
-            ThemeSelector.SelectedIndex = Properties.Settings.Default.isDarkTheme ? 1 : 0;
-            ApplyTheme();
-            _authService = new AuthService();
-            CheckTokenAndOpenAuthWindow();
-        }
+            Loaded += CommodityMonitorWindow_Loaded;
+			_authService = new AuthService();
+		}
+
+        private void CommodityMonitorWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+			ThemeSelector.SelectedIndex = Properties.Settings.Default.isDarkTheme ? 1 : 0;
+			ApplyTheme();
+			CheckTokenAndOpenAuthWindow();
+		}
 
         private void CheckTokenAndOpenAuthWindow()
         {

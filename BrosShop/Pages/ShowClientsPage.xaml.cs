@@ -25,13 +25,15 @@ namespace BrosShop.Pages
         public ShowClientsPage()
         {
             InitializeComponent();
-            LoadPage();
+            Loaded += ShowClientsPage_Loaded;
         }
 
-        public async Task LoadPage()
+        private async void ShowClientsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadClients();
-        }
+
+			await LoadClients();
+		}
+
 
         public async Task LoadClients()
         {

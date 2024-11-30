@@ -25,9 +25,15 @@ namespace BrosShop
         public AddProductWindow()
         {
             InitializeComponent();
-            LoadWindowAsync();
+            Loaded += AddProductWindow_Loaded;
             ApplyTheme();
         }
+
+        private async void AddProductWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+
+			await LoadCategoriesAsync();
+		}
 
         public async Task LoadCategoriesAsync()
         {
@@ -47,7 +53,6 @@ namespace BrosShop
 
         public async Task LoadWindowAsync()
         {
-            await LoadCategoriesAsync();
         }
 
         private async void SaveProductButton_Click(object sender, RoutedEventArgs e)

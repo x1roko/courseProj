@@ -23,19 +23,20 @@ namespace BrosShop.Windows
     /// </summary>
     public partial class ShowOrderWindow : Window, IThemeable
     {
-        int orderId;
+        private readonly int _orderId;
         public ShowOrderWindow(int id)
         {
             InitializeComponent();
-            orderId = id;
-            LoadWindow();
+            _orderId = id;
+            Loaded += ShowOrderWindow_Loaded;
         }
 
-        private async Task LoadWindow()
-        {
-            ApplyTheme();
-            await LoadProductsAsync();
-        }
+        private async void ShowOrderWindow_Loaded(object sender, RoutedEventArgs e)
+
+		{
+			ApplyTheme();
+			await LoadProductsAsync();
+		}
 
         public async Task LoadProductsAsync()
         {
@@ -45,13 +46,13 @@ namespace BrosShop.Windows
                 .Include(oc => oc.BrosShopProduct)
                 .Include(oc => oc.BrosShopProduct.BrosShopCategory)
                 .Include(oc => oc.BrosShopProduct.BrosShopProductAttributes)
-                .Where(oc => oc.BrosShopOrderId == orderId)
+                .Where(oc => oc.BrosShopOrderId == _orderId)
                 .Select(oc => new BrosShopSaledProducts
                 {
                     BrosShopProductId = oc.BrosShopProductId,
                     BrosShopTitle = oc.BrosShopProduct.BrosShopTitle,
                     BrosShopPrice = oc.BrosShopCost,
-                    BrosShopTurnover = oc.BrosShopCost * oc.BrosShopQuantity,
+                    BrosShopTurnover = Math.Round(oc.BrosShopCost * oc.BrosShopQuantity),
                     BrosShopProfit = oc.BrosShopCost - oc.BrosShopProduct.BrosShopPurcharesePrice,
                     BrosShopCategoryTitle = oc.BrosShopProduct.BrosShopCategory.BrosShopCategoryTitle,
                     BrosShopAttributeId = oc.BrosShopProduct.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),

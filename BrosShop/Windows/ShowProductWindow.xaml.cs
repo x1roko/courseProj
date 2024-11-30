@@ -22,20 +22,27 @@ namespace BrosShop
     public partial class ShowProductWindow : Window, IThemeable
     {
         private readonly ImageService _imageService;
+        private readonly int _productId;
         public ShowProductWindow(int productId)
         {
             InitializeComponent();
             _imageService = new ImageService();
-            LoadWindowAsync(productId);
-            LoadCategoriesAsync(productId);
+            Loaded += ShowProductWindow_Loaded;
             ApplyTheme();
         }
 
-        public async Task LoadCategoriesAsync(int productId)
+        private async void ShowProductWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+
+			await LoadWindowAsync();
+			await LoadCategoriesAsync();
+		}
+
+        public async Task LoadCategoriesAsync()
         {
             using BrosShopDbContext context = new();
 
-            var product = context.BrosShopProducts.FirstOrDefault(p => p.BrosShopProductId == productId);
+            var product = context.BrosShopProducts.FirstOrDefault(p => p.BrosShopProductId == _productId);
 
             if (product != null)
             {
@@ -59,7 +66,7 @@ namespace BrosShop
             }
         }
 
-        public async Task LoadWindowAsync(int productId)
+        public async Task LoadWindowAsync()
         {
             try
             {
@@ -68,7 +75,7 @@ namespace BrosShop
                 var product = await context.BrosShopProducts
                     .Include(p => p.BrosShopImages)
                     .Include(p => p.BrosShopCategory)
-                    .FirstOrDefaultAsync(p => p.BrosShopProductId == productId);
+                    .FirstOrDefaultAsync(p => p.BrosShopProductId == _productId);
 
                 if (product != null)
                 {
