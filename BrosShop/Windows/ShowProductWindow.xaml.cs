@@ -27,6 +27,7 @@ namespace BrosShop
         {
             InitializeComponent();
             _imageService = new ImageService();
+            _productId = productId;
             Loaded += ShowProductWindow_Loaded;
             ApplyTheme();
         }

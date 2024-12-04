@@ -16,7 +16,7 @@ namespace BrosShop
     {
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
         private int _currentPage = 1; // Текущая страница
-        private const int _pageSize = 10; // Количество элементов на странице
+        private const int _pageSize = 18; // Количество элементов на странице
 
         public ShowProductsPage()
         {
@@ -29,8 +29,6 @@ namespace BrosShop
 			await LoadCategoriesAsync();
 			await LoadAllProductsAsync();
 			UpdateCurrentPageDisplay();
-			nextButton.Content = "->";
-			previousButton.Content = "<-";
 		}
 
         public static decimal GetDiscountPrice(decimal price, int? discountPercent)
@@ -163,7 +161,6 @@ namespace BrosShop
         private void ProductsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var selectedProduct = productsListView.SelectedItem as BrosShopProductsModel;
-
             if (selectedProduct != null)
             {
                 new ShowProductWindow(selectedProduct.BrosShopProductId).Show();

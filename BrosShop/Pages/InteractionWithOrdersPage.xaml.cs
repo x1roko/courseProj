@@ -12,6 +12,9 @@ namespace BrosShop
     /// </summary>
     public partial class InteractionWithOrdersPage : Page
     {
+
+        private int _currentPage = 1; // Текущая страница
+        private const int _pageSize = 18; // Количество элементов на странице
         public InteractionWithOrdersPage()
         {
             InitializeComponent();
@@ -36,7 +39,11 @@ namespace BrosShop
                 var activeTypes = new HashSet<string>();
 
                 // Получаем все заказы из базы данных
-                var allOrders = await context.BrosShopOrders.AsNoTracking().ToListAsync(); 
+                var allOrders = await context.BrosShopOrders
+                    .AsNoTracking()
+                    .Skip((_currentPage - 1) * _pageSize)
+                    .Take(_pageSize)
+                    .ToListAsync(); 
 
                 ordersListView.ItemsSource = allOrders;
             }
@@ -46,7 +53,7 @@ namespace BrosShop
             }
         }
 
-        public async Task LoadOrders()
+        public async Task LoadOrdersAsync()
         {
             try
             {
@@ -59,7 +66,11 @@ namespace BrosShop
                 if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
 
                 // Получаем все заказы из базы данных
-                var allOrders = await context.BrosShopOrders.AsNoTracking().ToListAsync();
+                var allOrders = await context.BrosShopOrders
+                    .AsNoTracking()
+                    .Skip((_currentPage - 1) * _pageSize)
+                    .Take(_pageSize)
+                    .ToListAsync();
 
                 // Создаем новый список для хранения отфильтрованных заказов
                 List<BrosShopOrder> filteredOrders = [];
@@ -83,7 +94,7 @@ namespace BrosShop
 
         private async void TypeOrderCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            await LoadOrders();
+            await LoadOrdersAsync();
         }
 
         private async Task CalculateTurnoverAndProfitAsync()
@@ -148,6 +159,28 @@ namespace BrosShop
             {
                 new ShowOrderWindow(selectedOrder.BrosShopOrderId).Show();
             }
+        }
+
+        private async void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                await LoadOrdersAsync();
+                UpdateCurrentPageDisplay();
+            }
+        }
+
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            _currentPage++;
+            await LoadOrdersAsync();
+            UpdateCurrentPageDisplay();
+        }
+
+        private void UpdateCurrentPageDisplay()
+        {
+            currentPageTextBlock.Text = $"{_currentPage}";
         }
     }
 }

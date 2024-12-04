@@ -18,24 +18,37 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Для TabControl -->
             <RowDefinition Height="*"/>
-            <!-- Для Frame -->
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-            <TabControl x:Name="mainTabControl"  Grid.Row="0" SelectionChanged="TabControl_SelectionChanged">
-                <TabItem Header="Товары" Name="ProductsTabItem"/>
-                <TabItem Header="Заказы" Name="OrdersTabItem"/>
-                <TabItem Header="Категории" Name="CategoryTabItem"/>
-                <TabItem Header="Клиенты" Name="ClientsTabItem"/>
-            </TabControl>
-            <ComboBox x:Name="ThemeSelector" SelectionChanged="ThemeSelector_SelectionChanged"  Width="150" Margin="10">
-                <ComboBoxItem Content="Светлая тема" Tag="LightTheme"/>
-                <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme"/>
-            </ComboBox>
-            <Button x:Name="logoutButton" Content="Выйти" HorizontalAlignment="Right" Click="LogoutButton_Click"/>
-        </StackPanel>
-        <Grid Grid.Row="1">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!-- Занимает все доступное пространство -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Для кнопки "Выйти" -->
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TabControl x:Name="mainTabControl" SelectionChanged="TabControl_SelectionChanged" Margin="0,0,10,0">
+                    <TabItem Header="Товары" Name="ProductsTabItem"/>
+                    <TabItem Header="Заказы" Name="OrdersTabItem"/>
+                    <TabItem Header="Категории" Name="CategoryTabItem"/>
+                    <TabItem Header="Клиенты" Name="ClientsTabItem"/>
+                </TabControl>
+
+                <ToggleButton x:Name="ThemeToggleButton" Width="150" Style="{StaticResource CustomToggleButtonStyle}" Margin="0,0,10,0" Checked="ThemeToggleButton_Checked" Unchecked="ThemeToggleButton_Unchecked">
+                    <StackPanel Orientation="Horizontal">
+                        <Image x:Name="LightThemeImage" Width="20" Height="20" Margin="5" Visibility="Collapsed" Source="../Icons/sun.png"/>
+                        <Image x:Name="DarkThemeImage" Width="20" Height="20" Margin="5" Visibility="Visible" Source="../Icons/moon.png"/>
+                    </StackPanel>
+                </ToggleButton>
+            </StackPanel>
+
+            <Button x:Name="logoutButton" Content="Выйти" Click="LogoutButton_Click" Grid.Column="1" Margin="0,0,10,0" Height="32"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="10">
             <Frame Name="mainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
         </Grid>
     </Grid>

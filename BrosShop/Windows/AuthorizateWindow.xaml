@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop.Windows"
         mc:Ignorable="d"
-        Title="AuthorizateWindow" Height="450" Width="800">
+        Title="Авторизация" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,11 +15,14 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="Login:"/>
-        <TextBox x:Name="loginTextBox"/>
-        <TextBlock Text="Password:"/>
-        <TextBox x:Name="passwordTextBox"/>
-        <Button x:Name="authorizeButton" Content="Авторизоваться" Click="AuthorizeButton_Click"/>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+        <TextBlock Text="Логин:" FontSize="16" Margin="0,0,0,5"/>
+        <TextBox x:Name="loginTextBox" Margin="0,0,0,15" KeyDown="TextBox_KeyDown" Padding="10" FontSize="14"/>
+
+        <TextBlock Text="Пароль:" FontSize="16" Margin="0,0,0,5"/>
+        <TextBox x:Name="passwordTextBox" Margin="0,0,0,15" KeyDown="TextBox_KeyDown" Padding="10" FontSize="14"/>
+
+        <Button x:Name="authorizeButton" Content="Авторизоваться" Click="AuthorizeButton_Click" Padding="10" FontSize="16" Cursor="Hand"/>
     </StackPanel>
 </Window>

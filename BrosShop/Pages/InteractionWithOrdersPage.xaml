@@ -11,15 +11,44 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="ordersListView" MouseDoubleClick="OrdersListView_MouseDoubleClick">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
-                    <GridViewColumn Header="Дата заказа" DisplayMemberBinding="{Binding BrosShopDateTimeOrder}"/>
-                    <GridViewColumn Header="Тип заказа" DisplayMemberBinding="{Binding BrosShopTypeOrder}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+
+        <StackPanel>
+            <ListView x:Name="ordersListView" MouseDoubleClick="OrdersListView_MouseDoubleClick">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
+                        <GridViewColumn Header="Дата заказа" DisplayMemberBinding="{Binding BrosShopDateTimeOrder}"/>
+                        <GridViewColumn Header="Тип заказа" DisplayMemberBinding="{Binding BrosShopTypeOrder}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.7*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="previousButton" Click="PreviousButton_Click" Grid.Column="1" Width="30" Height="30">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5"/>
+                </StackPanel>
+            </Button>
+
+            <TextBlock x:Name="currentPageTextBlock" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Button x:Name="nextButton" Grid.Column="2" Click="NextButton_Click"  Width="30" Height="30">
+                <StackPanel>
+                    <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <RotateTransform Angle="-180"/>
+                        </Image.RenderTransform>
+                    </Image>
+                </StackPanel>
+                </Button>
+            </Grid>
+        </StackPanel>
         <StackPanel Grid.Column="1">
             <TextBlock Text="Отображать заказы из:"/>
             <StackPanel x:Name="paymentOrders">

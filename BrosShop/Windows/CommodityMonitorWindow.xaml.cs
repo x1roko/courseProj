@@ -14,6 +14,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -34,8 +35,9 @@ namespace BrosShop
 
         private void CommodityMonitorWindow_Loaded(object sender, RoutedEventArgs e)
         {
-			ThemeSelector.SelectedIndex = Properties.Settings.Default.isDarkTheme ? 1 : 0;
-			ApplyTheme();
+            ThemeToggleButton.IsChecked = Properties.Settings.Default.isDarkTheme;
+            UpdateThemeImage();
+            ApplyTheme();
 			CheckTokenAndOpenAuthWindow();
 		}
 
@@ -89,17 +91,6 @@ namespace BrosShop
             }
         }
 
-        private void ThemeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ThemeSelector.SelectedItem is ComboBoxItem selectedItem)
-            {
-                Properties.Settings.Default.isDarkTheme = (selectedItem.Tag.ToString() == "DarkTheme");
-                Properties.Settings.Default.Save(); // Сохраняем настройки
-                ApplyTheme(); // Применяем выбранную тему
-            }
-
-        }
-
         public void ApplyTheme()
         {
             Application.Current.MainWindow.Resources.MergedDictionaries.Clear();
@@ -118,6 +109,7 @@ namespace BrosShop
                 Application.Current.Resources.MergedDictionaries.Add(lightTheme);
             }
             Background = (Brush)Resources["WindowBackground"];
+            ThemeToggleButton.Background = (Brush)Resources["ThemeButtonBackground"]; ;
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -126,6 +118,45 @@ namespace BrosShop
             Properties.Settings.Default.Save();
             Close();
             new CommodityMonitorWindow().ShowDialog();
+        }
+
+        private void ThemeToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.isDarkTheme = true;
+            Properties.Settings.Default.Save(); // Сохраняем настройки
+            UpdateThemeImage();
+            ApplyTheme(); // Применяем выбранную тему
+        }
+
+        private void ThemeToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.isDarkTheme = false;
+            Properties.Settings.Default.Save(); // Сохраняем настройки
+            UpdateThemeImage();
+            ApplyTheme(); // Применяем выбранную тему
+        }
+
+        private void UpdateThemeImage()
+        {
+            var (visibleImage, hiddenImage) = Properties.Settings.Default.isDarkTheme
+                ? (DarkThemeImage, LightThemeImage) : (LightThemeImage, DarkThemeImage);
+
+            AnimateImageVisibility(visibleImage, 0.0, 1.0);
+            AnimateImageVisibility(hiddenImage, 1.0, 0.0);
+        }
+
+        private static void AnimateImageVisibility(Image image, double fromOpacity, double toOpacity)
+        {
+            var animation = new DoubleAnimation(fromOpacity, toOpacity, TimeSpan.FromMilliseconds(300));
+            animation.Completed += (s, e) =>
+            {
+                // Устанавливаем видимость на Collapsed только если opacity 0
+                if (toOpacity == 0.0)
+                    image.Visibility = Visibility.Collapsed;
+                else
+                    image.Visibility = Visibility.Visible;
+            };
+            image.BeginAnimation(UIElement.OpacityProperty, animation);
         }
     }
 }

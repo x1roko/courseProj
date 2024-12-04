@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\arrow.png" />
+    <None Remove="Icons\moon.png" />
+    <None Remove="Icons\sun.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Styles\DarkTheme.xaml" />
     <Page Remove="Styles\LightTheme.xaml" />
   </ItemGroup>
@@ -27,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Icons\arrow.png" />
+    <Resource Include="Icons\moon.png" />
+    <Resource Include="Icons\sun.png" />
     <Resource Include="Styles\DarkTheme.xaml" />
     <Resource Include="Styles\LightTheme.xaml" />
   </ItemGroup>

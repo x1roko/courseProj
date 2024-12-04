@@ -63,8 +63,7 @@ namespace BrosShop
                 string name = nameProductTextBox.Text;
                 decimal purchasePrice;
                 decimal salePrice;
-                int category = 0;
-                MessageBox.Show($"{categoryCheckBox.IsChecked.Value}");
+                int? category = null;
                 if (!categoryCheckBox.IsChecked.Value && categoryComboBox.SelectedItem != null)
                     category = Int32.Parse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString());
                 Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
@@ -82,6 +81,8 @@ namespace BrosShop
                     MessageBox.Show("Некорректная цена продажи.");
                     return;
                 }
+
+                //var categoryId = category == 0 ? null : category;
 
                 var product = new BrosShopProduct
                 {

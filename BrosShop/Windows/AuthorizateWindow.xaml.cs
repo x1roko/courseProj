@@ -67,5 +67,13 @@ namespace BrosShop.Windows
                 MessageBox.Show("Произошла ошибка");
             }
         }
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                AuthorizeButton_Click(sender, e);
+            }
+        }
+
     }
 }
