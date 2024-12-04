@@ -30,7 +30,7 @@
             <Border>
                 <TextBlock x:Name="showProfitTextBlock"/>
             </Border>
-            <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged"/>
+            <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged" VerticalAlignment="Bottom"/>
         </StackPanel>
     </Grid>
 </Page>

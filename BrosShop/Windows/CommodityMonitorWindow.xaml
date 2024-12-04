@@ -22,7 +22,7 @@
             <RowDefinition Height="*"/>
             <!-- Для Frame -->
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
             <TabControl x:Name="mainTabControl"  Grid.Row="0" SelectionChanged="TabControl_SelectionChanged">
                 <TabItem Header="Товары" Name="ProductsTabItem"/>
                 <TabItem Header="Заказы" Name="OrdersTabItem"/>
@@ -33,6 +33,7 @@
                 <ComboBoxItem Content="Светлая тема" Tag="LightTheme"/>
                 <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme"/>
             </ComboBox>
+            <Button x:Name="logoutButton" Content="Выйти" HorizontalAlignment="Right" Click="LogoutButton_Click"/>
         </StackPanel>
         <Grid Grid.Row="1">
             <Frame Name="mainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden"/>

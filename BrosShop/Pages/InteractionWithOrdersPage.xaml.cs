@@ -132,7 +132,7 @@ namespace BrosShop
 
         private void ShowProfit(decimal turnover = 0, decimal profit = 0)
         {
-            showProfitTextBlock.Text = $"За {mainCalendar.SelectedDate.Value.Date} оборот составил {turnover}\n, а прибыль {profit}";
+            showProfitTextBlock.Text = $"{mainCalendar.SelectedDate.Value.Date}\nОборот :\t{turnover}\nПрибыль :\t{profit}";
         }
 
         private async void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)

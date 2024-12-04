@@ -58,7 +58,6 @@ namespace BrosShop
         {
             if (_authService.LoadToken() == null)
             {
-                // Если токена нет, можно закрыть основное окно
                 MessageBox.Show("Не удалось авторизоваться. Приложение будет закрыто.");
                 Close();
             }
@@ -119,6 +118,14 @@ namespace BrosShop
                 Application.Current.Resources.MergedDictionaries.Add(lightTheme);
             }
             Background = (Brush)Resources["WindowBackground"];
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Token = null;
+            Properties.Settings.Default.Save();
+            Close();
+            new CommodityMonitorWindow().ShowDialog();
         }
     }
 }

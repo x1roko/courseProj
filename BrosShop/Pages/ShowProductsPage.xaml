@@ -22,10 +22,6 @@
                     <!-- Для кнопки "Вперед" -->
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
-                <Button x:Name="previousButton" Content="Назад" Click="PreviousButton_Click"/>
-                <TextBlock x:Name="currentPageTextBlock" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
-                <Button x:Name="nextButton" Grid.Column="2" Content="Вперед" Click="NextButton_Click"/>
                 <Button x:Name="refreshButton" Grid.Column="3" Content="Обновить" Click="RefreshButton_Click"/>
             </Grid>
 
@@ -45,7 +41,18 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-        <Button x:Name="addProductButton" Height="50" Content="Добавить товар" Click="AddProductButton_Click"/>
+            <Button x:Name="addProductButton" Height="50" Content="Добавить товар" Click="AddProductButton_Click"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="previousButton" Content="Назад" Click="PreviousButton_Click" Grid.Column="1"/>
+                <TextBlock x:Name="currentPageTextBlock" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button x:Name="nextButton" Grid.Column="3" Content="Вперед" Click="NextButton_Click"/>
+            </Grid>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1">
             <Button x:Name="showAllProductsButton" Content="Показать все товары" Click="ShowAllProductsButton_Click"/>
