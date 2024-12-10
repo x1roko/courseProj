@@ -3,21 +3,20 @@
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="#FF121212"/>
     <!-- Очень темный фон -->
-    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#FFBB86FC"/>
-    <!-- Лавандовый цвет для выделения -->
+    <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#FF6200EE"/>
+    <!-- Темно-фиолетовый -->
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFFFF"/>
     <!-- Белый текст -->
+    <SolidColorBrush x:Key="SelectedForegroundBrush" Color="#FF121212"/>
+    <!-- Темный цвет для выделенного текста -->
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#FF1E1E1E"/>
     <!-- Темно-серый фон для панелей -->
     <SolidColorBrush x:Key="ButtonForegroundBrush" Color="#FF000000"/>
     <!-- Черный текст на кнопках -->
-    <SolidColorBrush x:Key="SelectedForegroundBrush" Color="#FF121212"/>
-    <!-- Темный цвет для выделенного текста -->
     <SolidColorBrush x:Key="WindowBackground" Color="#FF1B1B1B"/>
     <!-- Темный фон окна -->
     <SolidColorBrush x:Key="ThemeButtonBackground" Color="#FF3700B3"/>
     <!-- Темно-фиолетовый для кнопок -->
-
 
     <Style TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
@@ -165,7 +164,6 @@
         </Setter>
     </Style>
 
-
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ButtonForegroundBrush}"/>
@@ -239,9 +237,9 @@
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Padding" Value="10"/>
         <!-- Увеличьте отступы -->
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="18"/>
         <!-- Увеличьте размер шрифта -->
     </Style>
 
@@ -250,10 +248,9 @@
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="20"/>
-        <!-- Увеличьте отступы -->
-        <Setter Property="FontSize" Value="18"/>
-        <!-- Увеличьте размер шрифта -->
+        <Setter Property="Padding" Value="40"/>
+        <!-- Увеличьте отступы для текста внутри вкладки -->
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="Template">
@@ -261,14 +258,14 @@
                 <ControlTemplate TargetType="TabItem">
                     <Grid>
                         <Border x:Name="Border"
-                            Background="{TemplateBinding Background}" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            BorderThickness="{TemplateBinding BorderThickness}" 
-                            CornerRadius="5">
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="{TemplateBinding BorderThickness}" 
+                    CornerRadius="5">
                             <ContentPresenter x:Name="Content" 
-                                          ContentSource="Header" 
-                                          HorizontalAlignment="Stretch" 
-                                          VerticalAlignment="Center"/>
+                                  ContentSource="Header" 
+                                  HorizontalAlignment="Stretch" 
+                                  VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

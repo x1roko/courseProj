@@ -31,14 +31,15 @@ namespace BrosShop
             InitializeComponent();
             Loaded += CommodityMonitorWindow_Loaded;
 			_authService = new AuthService();
-		}
+            CheckTokenAndOpenAuthWindow();
+        }
 
         private void CommodityMonitorWindow_Loaded(object sender, RoutedEventArgs e)
         {
             ThemeToggleButton.IsChecked = Properties.Settings.Default.isDarkTheme;
             UpdateThemeImage();
             ApplyTheme();
-			CheckTokenAndOpenAuthWindow();
+            //CheckTokenAndOpenAuthWindow();
 		}
 
         private void CheckTokenAndOpenAuthWindow()

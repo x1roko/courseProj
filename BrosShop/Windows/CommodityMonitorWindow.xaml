@@ -29,23 +29,25 @@
                 <!-- Для кнопки "Выйти" -->
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Margin="10">
-                <TabControl x:Name="mainTabControl" SelectionChanged="TabControl_SelectionChanged" Margin="0,0,10,0">
-                    <TabItem Header="Товары" Name="ProductsTabItem"/>
-                    <TabItem Header="Заказы" Name="OrdersTabItem"/>
-                    <TabItem Header="Категории" Name="CategoryTabItem"/>
-                    <TabItem Header="Клиенты" Name="ClientsTabItem"/>
-                </TabControl>
+            <StackPanel Orientation="Horizontal" Margin="10" Height="53.6">
+                <GroupBox Header="Управление" Margin="0,0,10,0">
+                    <TabControl x:Name="mainTabControl" SelectionChanged="TabControl_SelectionChanged" Margin="0" Padding="20,0">
+                        <TabItem Header=" Товары " Name="ProductsTabItem"/>
+                        <TabItem Header=" Заказы " Name="OrdersTabItem"/>
+                        <TabItem Header=" Категории " Name="CategoryTabItem"/>
+                        <TabItem Header=" Клиенты " Name="ClientsTabItem"/>
+                    </TabControl>
+                </GroupBox>
 
-                <ToggleButton x:Name="ThemeToggleButton" Width="150" Style="{StaticResource CustomToggleButtonStyle}" Margin="0,0,10,0" Checked="ThemeToggleButton_Checked" Unchecked="ThemeToggleButton_Unchecked">
-                    <StackPanel Orientation="Horizontal">
+                <ToggleButton x:Name="ThemeToggleButton" Height="30" Width="150" VerticalAlignment="Center" Style="{StaticResource CustomToggleButtonStyle}" Margin="0,10,10,0" Checked="ThemeToggleButton_Checked" Unchecked="ThemeToggleButton_Unchecked">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
                         <Image x:Name="LightThemeImage" Width="20" Height="20" Margin="5" Visibility="Collapsed" Source="../Icons/sun.png"/>
                         <Image x:Name="DarkThemeImage" Width="20" Height="20" Margin="5" Visibility="Visible" Source="../Icons/moon.png"/>
                     </StackPanel>
                 </ToggleButton>
             </StackPanel>
 
-            <Button x:Name="logoutButton" Content="Выйти" Click="LogoutButton_Click" Grid.Column="1" Margin="0,0,10,0" Height="32"/>
+            <Button x:Name="logoutButton" Content="Выйти" Click="LogoutButton_Click" Grid.Column="1" Margin="0,10,10,0" Height="30"/>
         </Grid>
 
         <Grid Grid.Row="1" Margin="10">

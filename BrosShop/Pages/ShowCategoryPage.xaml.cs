@@ -1,4 +1,5 @@
 ﻿using BrosShop.Models;
+using BrosShop.Windows;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace BrosShop.Pages
 
         private void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
-
+            new AddCategoryWindow().Show();
         }
     }
 }

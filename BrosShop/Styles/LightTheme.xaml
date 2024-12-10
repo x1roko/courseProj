@@ -47,12 +47,13 @@
         </Style.Triggers>
     </Style>
 
-
     <Style TargetType="GridViewColumnHeader">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="Padding" Value="0"/>
+        <!-- Увеличен внутренний отступ -->
         <Setter Property="FontSize" Value="16"/>
+        <!-- Увеличен размер шрифта -->
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
@@ -74,14 +75,14 @@
     <Style x:Key="ComboBoxToggleButtonStyle" TargetType="ToggleButton">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="Black"/>
-        <Setter Property="Foreground" Value="#FF000000"/>
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Border Background="{StaticResource SecondaryBackgroundBrush}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}">
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>
@@ -92,7 +93,7 @@
     <Style TargetType="ComboBox">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="#FFB0B0B0"/>
+        <Setter Property="BorderBrush" Value="#FF3A3A3A"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="Template">
@@ -100,34 +101,34 @@
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <ToggleButton Name="ToggleButton"
-                                      Style="{StaticResource ComboBoxToggleButtonStyle}"
-                                      Grid.Column="2"
-                                      Focusable="False"
-                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}"
-                                      ClickMode="Press">
+                                  Style="{StaticResource ComboBoxToggleButtonStyle}"
+                                  Grid.Column="2"
+                                  Focusable="False"
+                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}"
+                                  ClickMode="Press">
                             <ContentPresenter />
                         </ToggleButton>
                         <ContentPresenter Name="ContentSite"
-                                          IsHitTestVisible="False"
-                                          Content="{TemplateBinding SelectionBoxItem}"
-                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                          Margin="3,3,23,3"
-                                          VerticalAlignment="Center"
-                                          HorizontalAlignment="Left" />
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      Margin="3,3,23,3"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Left" />
                         <Popup Name="Popup"
-                               Placement="Bottom"
-                               AllowsTransparency="True"
-                               Focusable="False"
-                               IsOpen="{TemplateBinding IsDropDownOpen}"
-                               PopupAnimation="Slide">
+                           Placement="Bottom"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           PopupAnimation="Slide">
                             <Grid Name="DropDown"
-                                  MinWidth="{TemplateBinding ActualWidth}"
-                                  Background="{StaticResource BackgroundBrush}">
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              Background="{StaticResource BackgroundBrush}">
                                 <Border x:Name="DropDownBorder"
-                                        BorderThickness="1"
-                                        BorderBrush="#FFB0B0B0"
-                                        Background="{StaticResource BackgroundBrush}">
+                                    BorderThickness="1"
+                                    BorderBrush="#FF3A3A3A"
+                                    Background="{StaticResource BackgroundBrush}">
                                     <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                         <ItemsPresenter />
                                     </ScrollViewer>
@@ -163,7 +164,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
@@ -238,22 +238,20 @@
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Padding" Value="10"/>
         <!-- Увеличьте отступы -->
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="18"/>
         <!-- Увеличьте размер шрифта -->
     </Style>
-
 
     <Style TargetType="TabItem">
         <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="20"/>
-        <!-- Увеличьте отступы -->
-        <Setter Property="FontSize" Value="18"/>
-        <!-- Увеличьте размер шрифта -->
+        <Setter Property="Padding" Value="40"/>
+        <!-- Увеличьте отступы для текста внутри вкладки -->
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="Template">
@@ -261,14 +259,14 @@
                 <ControlTemplate TargetType="TabItem">
                     <Grid>
                         <Border x:Name="Border"
-                        Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        CornerRadius="5">
+                Background="{TemplateBinding Background}" 
+                BorderBrush="{TemplateBinding BorderBrush}" 
+                BorderThickness="{TemplateBinding BorderThickness}" 
+                CornerRadius="5">
                             <ContentPresenter x:Name="Content" 
-                                      ContentSource="Header" 
-                                      HorizontalAlignment="Stretch" 
-                                      VerticalAlignment="Center"/>
+                              ContentSource="Header" 
+                              HorizontalAlignment="Stretch" 
+                              VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -318,9 +316,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Border Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        CornerRadius="5">
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="{TemplateBinding BorderThickness}" 
+                    CornerRadius="5">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
