@@ -34,7 +34,6 @@ namespace BrosShop
 
         private async void ShowProductWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
 			await LoadWindowAsync();
 			await LoadCategoriesAsync();
 		}
@@ -216,7 +215,10 @@ namespace BrosShop
             decimal salePrice;
             int category = 0;
             if (!categoryCheckBox.IsChecked.Value)
-                category = Int32.Parse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString());
+                if (categoryComboBox.SelectedItem != null)
+                    Int32.TryParse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString(), out category);
+                else
+                    category = 0;
             Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
             string description = descriptionProductTextBox.Text;
 
@@ -244,7 +246,7 @@ namespace BrosShop
             product.BrosShopPrice = salePrice;
             product.BrosShopCategoryId = category == 0 ? null : category;
             product.BrosShopDescription = description;
-            product.BrosShopWbarticul = wbArticul;
+            product.BrosShopWbarticul = wbArticul == 0 ? null : wbArticul;
             product.BrosShopDiscountPercent = 0;
 
             context.SaveChanges();
@@ -297,7 +299,7 @@ namespace BrosShop
 
         private void CategoryCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (categoryCheckBox.IsChecked.HasValue)
+            if (categoryCheckBox.IsChecked.Value)
             {
                 categoryComboBox.Visibility = Visibility.Collapsed;
                 return;

@@ -63,9 +63,12 @@ namespace BrosShop
                 string name = nameProductTextBox.Text;
                 decimal purchasePrice;
                 decimal salePrice;
-                int? category = null;
-                if (!categoryCheckBox.IsChecked.Value && categoryComboBox.SelectedItem != null)
-                    category = Int32.Parse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString());
+                int category = 0;
+                if (!categoryCheckBox.IsChecked.Value)
+                    if (categoryComboBox.SelectedItem != null)
+                        Int32.TryParse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString(), out category);
+                    else
+                        category = 0;
                 Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
                 string description = descriptionProductTextBox.Text;
 

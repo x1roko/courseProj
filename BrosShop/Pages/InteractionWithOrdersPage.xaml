@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop"
         mc:Ignorable="d"
-        Title="Заказы:">
+        Title="Заказы:" KeyDown="Page_KeyDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -60,6 +60,7 @@
                 <TextBlock x:Name="showProfitTextBlock"/>
             </Border>
             <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged" VerticalAlignment="Bottom"/>
+            <Button x:Name="saveButton" Click="SaveButton_Click" Content="Экспорт" Width="100" Height="30" />
         </StackPanel>
     </Grid>
 </Page>

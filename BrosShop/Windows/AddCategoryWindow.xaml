@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrosShop.Windows"
         mc:Ignorable="d"
-        Title="AddCategoryWindow" Height="100" Width="800">
+        Title="AddCategoryWindow" Height="200" Width="800">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
