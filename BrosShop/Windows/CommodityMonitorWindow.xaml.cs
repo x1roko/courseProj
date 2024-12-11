@@ -94,10 +94,19 @@ namespace BrosShop
 
         public void ApplyTheme()
         {
+            // Очищаем текущие словари ресурсов
             Application.Current.MainWindow.Resources.MergedDictionaries.Clear();
 
+            // Загружаем новые словари ресурсов
             ResourceDictionary lightTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/LightTheme.xaml", UriKind.Relative));
             ResourceDictionary darkTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/DarkTheme.xaml", UriKind.Relative));
+
+            // Определяем новый фон
+            SolidColorBrush newBackground = Properties.Settings.Default.isDarkTheme
+                    ? (SolidColorBrush)darkTheme["WindowBackground"]
+                    : (SolidColorBrush)lightTheme["WindowBackground"];
+            // Анимируем смену фона
+            AnimateWindowBackgroundChange(newBackground);
 
             if (Properties.Settings.Default.isDarkTheme)
             {
@@ -109,9 +118,12 @@ namespace BrosShop
                 Application.Current.MainWindow.Resources.MergedDictionaries.Add(lightTheme);
                 Application.Current.Resources.MergedDictionaries.Add(lightTheme);
             }
+
+            // Обновляем фон и другие элементы после смены темы
             Background = (Brush)Resources["WindowBackground"];
-            ThemeToggleButton.Background = (Brush)Resources["ThemeButtonBackground"]; ;
+            ThemeToggleButton.Background = (Brush)Resources["ThemeButtonBackground"];
         }
+
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
@@ -144,6 +156,36 @@ namespace BrosShop
 
             AnimateImageVisibility(visibleImage, 0.0, 1.0);
             AnimateImageVisibility(hiddenImage, 1.0, 0.0);
+        }
+
+        private void AnimateWindowBackgroundChange(SolidColorBrush newBackground)
+        {
+            // Создаем новый SolidColorBrush для анимации
+            var animatedBrush = new SolidColorBrush(((SolidColorBrush)Background).Color);
+            Background = animatedBrush; // Устанавливаем анимируемый цвет как фон окна
+
+            // Создаем анимацию цвета
+            var colorAnimation = new ColorAnimation
+            {
+                From = animatedBrush.Color,
+                To = newBackground.Color,
+                Duration = TimeSpan.FromMilliseconds(1300)
+            };
+
+            // Привязываем анимацию к свойству Color
+            Storyboard storyboard = new Storyboard();
+            storyboard.Children.Add(colorAnimation);
+            Storyboard.SetTarget(colorAnimation, animatedBrush);
+            Storyboard.SetTargetProperty(colorAnimation, new PropertyPath(SolidColorBrush.ColorProperty));
+
+            // Запускаем анимацию
+            storyboard.Begin();
+
+            // Устанавливаем новый фон после завершения анимации
+            storyboard.Completed += (s, e) =>
+            {
+                Background = newBackground;
+            };
         }
 
         private static void AnimateImageVisibility(Image image, double fromOpacity, double toOpacity)
