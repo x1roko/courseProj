@@ -202,7 +202,7 @@ namespace BrosShop
 
         private void OrdersListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var selectedOrder = ordersListView.SelectedItem as BrosShopOrder;
+            var selectedOrder = ordersListView.SelectedItem as BrosShopOrderModel;
 
             if (selectedOrder != null)
             {
