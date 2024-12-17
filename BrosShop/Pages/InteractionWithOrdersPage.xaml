@@ -19,48 +19,57 @@
                         <GridViewColumn Header="ID" DisplayMemberBinding="{Binding BrosShopOrderId}"/>
                         <GridViewColumn Header="Дата заказа" DisplayMemberBinding="{Binding BrosShopDateTimeOrder}"/>
                         <GridViewColumn Header="Тип заказа" DisplayMemberBinding="{Binding BrosShopTypeOrder}"/>
+                        <GridViewColumn Header="Колличество позиций" DisplayMemberBinding="{Binding ItemCount}"/>
+                        <GridViewColumn Header="Заказщик" DisplayMemberBinding="{Binding UserName}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
             <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.7*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <Button x:Name="previousButton" Click="PreviousButton_Click" Grid.Column="1" Width="30" Height="30">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5"/>
-                </StackPanel>
-            </Button>
+                <Button x:Name="previousButton" Click="PreviousButton_Click" Grid.Column="1" Width="30" Height="30">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5"/>
+                    </StackPanel>
+                </Button>
 
-            <TextBlock x:Name="currentPageTextBlock" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="currentPageTextBlock" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-            <Button x:Name="nextButton" Grid.Column="2" Click="NextButton_Click"  Width="30" Height="30">
-                <StackPanel>
-                    <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
-                        <Image.RenderTransform>
-                            <RotateTransform Angle="-180"/>
-                        </Image.RenderTransform>
-                    </Image>
-                </StackPanel>
+                <Button x:Name="nextButton" Grid.Column="2" Click="NextButton_Click"  Width="30" Height="30">
+                    <StackPanel>
+                        <Image Source="../Icons/arrow.png" Width="16" Height="16" RenderTransformOrigin="0.5,0.5">
+                            <Image.RenderTransform>
+                                <RotateTransform Angle="-180"/>
+                            </Image.RenderTransform>
+                        </Image>
+                    </StackPanel>
                 </Button>
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Column="1">
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="100"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <TextBlock Text="Отображать заказы из:"/>
-            <StackPanel x:Name="paymentOrders">
+            <StackPanel x:Name="paymentOrders" Grid.Row="1">
                 <CheckBox x:Name="cassaCheckBox" Content="Касса" Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
                 <CheckBox x:Name="wbCheckBox" Content="Wildberris"  Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
                 <CheckBox x:Name="siteCheckBox" Content="Сайт" Checked="TypeOrderCheckBox_Checked" Unchecked="TypeOrderCheckBox_Checked"/>
             </StackPanel>
-            <Border>
-                <TextBlock x:Name="showProfitTextBlock"/>
-            </Border>
-            <Calendar x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged" VerticalAlignment="Bottom"/>
-            <Button x:Name="saveButton" Click="SaveButton_Click" Content="Экспорт" Width="100" Height="30" />
-        </StackPanel>
+            <Button x:Name="saveButton" Click="SaveButton_Click" Content="Экспорт" Width="100" Height="30" Grid.Row="2" />
+            <TextBlock x:Name="showProfitTextBlock" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Grid Grid.Row="4">
+                <Calendar HorizontalAlignment="Stretch"  x:Name="mainCalendar" SelectedDatesChanged="Calendar_SelectedDatesChanged" VerticalAlignment="Bottom"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
