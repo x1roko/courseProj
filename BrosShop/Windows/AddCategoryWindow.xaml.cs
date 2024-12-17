@@ -32,6 +32,9 @@ namespace BrosShop.Windows
             using var context = new BrosShopDbContext();
             if (nameCategoryTextBox.Text.Length > 0)
                 await context.BrosShopCategories.AddAsync(new BrosShopCategory { BrosShopCategoryTitle = nameCategoryTextBox.Text});
+            await context.SaveChangesAsync();
+            MessageBox.Show("Категория добавлена");
+            Close();
         }
 
         public void ApplyTheme()

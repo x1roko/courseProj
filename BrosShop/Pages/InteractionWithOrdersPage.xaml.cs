@@ -28,28 +28,44 @@ namespace BrosShop
         {
             await LoadAllOrders();
             await CalculateTurnoverAndProfitAsync();
-            wbCheckBox.IsChecked = true;
-            cassaCheckBox.IsChecked = true;
-            siteCheckBox.IsChecked = true;
         }
 
         public async Task LoadAllOrders()
         {
             try
             {
-                using BrosShopDbContext context = new();
+                using (BrosShopDbContext context = new())
+                {
+                    var orderData = await context.BrosShopOrders
+                        .AsNoTracking()
+                        .Skip((_currentPage - 1) * _pageSize)
+                        .Take(_pageSize)
+                        .Include(o => o.BrosShopUser)
+                        .GroupJoin(
+                            context.BrosShopOrderCompositions.AsNoTracking(),
+                            order => order.BrosShopOrderId,
+                            composition => composition.BrosShopOrderId,
+                            (order, compositions) => new
+                            {
+                                Order = order,
+                                ItemCount = compositions.Sum(c => c.BrosShopQuantity)
+                            })
+                        .ToListAsync();
 
-                var activeTypes = new HashSet<string>();
+                    var orderModels = orderData.Select(data => new BrosShopOrderModel
+                    {
+                        BrosShopOrderId = data.Order.BrosShopOrderId,
+                        BrosShopDateTimeOrder = data.Order.BrosShopDateTimeOrder,
+                        BrosShopTypeOrder = data.Order.BrosShopTypeOrder,
+                        UserName = data.Order.BrosShopUser?.BrosShopUsername,
+                        ItemCount = data.ItemCount
+                    }).ToList();
 
-                // Получаем все заказы из базы данных
-                var allOrders = await context.BrosShopOrders
-                    .AsNoTracking()
-                    .Skip((_currentPage - 1) * _pageSize)
-                    .Take(_pageSize)
-                    .ToListAsync();
-
-                ordersListView.ItemsSource = allOrders;
+                    // Устанавливаем источник данных для ListView
+                    ordersListView.ItemsSource = orderModels;
+                }
             }
+
             catch (Exception)
             {
                 MessageBox.Show("Возникла ошибка, проверте доступность сервера");
@@ -60,38 +76,68 @@ namespace BrosShop
         {
             try
             {
-                using BrosShopDbContext context = new();
-
-                var activeTypes = new HashSet<string>();
-
-                if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
-                if (cassaCheckBox.IsChecked == true) activeTypes.Add("касса");
-                if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
-
-                // Получаем все заказы из базы данных
-                var allOrders = await context.BrosShopOrders
-                    .AsNoTracking()
-                    .Skip((_currentPage - 1) * _pageSize)
-                    .Take(_pageSize)
-                    .ToListAsync();
-
-                // Создаем новый список для хранения отфильтрованных заказов
-                List<BrosShopOrder> filteredOrders = [];
-
-                foreach (var order in allOrders)
+                using (BrosShopDbContext context = new())
                 {
-                    // Проверяем, содержит ли BrosShopTypeOrder хотя бы один из активных типов
-                    if (order.BrosShopTypeOrder != null && activeTypes.Any(type => order.BrosShopTypeOrder.Contains(type)))
-                    {
-                        filteredOrders.Add(order);
-                    }
-                }
 
-                ordersListView.ItemsSource = filteredOrders;
+                    var activeTypes = new HashSet<string>();
+
+                    if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
+                    if (cassaCheckBox.IsChecked == true) activeTypes.Add("касса");
+                    if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
+
+                    // Получаем все заказы из базы данных
+                    var allOrders = await context.BrosShopOrders
+                        .AsNoTracking()
+                        .Skip((_currentPage - 1) * _pageSize)
+                        .Take(_pageSize)
+                        .ToListAsync();
+
+                    // Создаем новый список для хранения отфильтрованных заказов
+                    List<BrosShopOrder> filteredOrders = [];
+
+                    foreach (var order in allOrders)
+                    {
+                        // Проверяем, содержит ли BrosShopTypeOrder хотя бы один из активных типов
+                        if (order.BrosShopTypeOrder != null && activeTypes.Any(type => order.BrosShopTypeOrder.Contains(type)))
+                        {
+                            filteredOrders.Add(order);
+                        }
+                    }
+
+                    var orderModels = new List<BrosShopOrderModel>();
+
+                    foreach (var order in filteredOrders)
+                    {
+                        // Получаем количество позиций для текущего заказа
+                        int itemCount = await GetItemCountByOrderId(order.BrosShopOrderId);
+
+                        // Создаем модель заказа и добавляем в список
+                        orderModels.Add(new BrosShopOrderModel
+                        {
+                            BrosShopOrderId = order.BrosShopOrderId,
+                            BrosShopDateTimeOrder = order.BrosShopDateTimeOrder,
+                            BrosShopTypeOrder = order.BrosShopTypeOrder,
+                            UserName = order.BrosShopUser?.BrosShopUsername, // Проверяем на null
+                            ItemCount = itemCount
+                        });
+                    }
+
+                    // Устанавливаем источник данных для ListView
+                    ordersListView.ItemsSource = orderModels;
+                }
             }
             catch (Exception)
             {
                 MessageBox.Show("Возникла ошибка, проверте доступность сервера");
+            }
+        }
+
+        private async static Task<int> GetItemCountByOrderId(int orderId)
+        {
+            using (var context = new BrosShopDbContext())
+            {
+                return await context.BrosShopOrderCompositions
+                    .CountAsync(oc => oc.BrosShopOrderId == orderId);
             }
         }
 
