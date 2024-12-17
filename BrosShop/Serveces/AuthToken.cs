@@ -10,4 +10,5 @@ namespace BrosShop.Serveces
     {
         public string Token { get; set; }
     }
+
 }
