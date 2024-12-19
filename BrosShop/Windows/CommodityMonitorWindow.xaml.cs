@@ -1,22 +1,14 @@
-﻿using BrosShop.Pages;
+﻿using BrosShop.Models;
+using BrosShop.Pages;
 using BrosShop.Serveces;
 using BrosShop.Styles;
 using BrosShop.Windows;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BrosShop
 {
@@ -26,11 +18,20 @@ namespace BrosShop
     public partial class CommodityMonitorWindow : Window, IThemeable
     {
         private readonly AuthService _authService;
+        private readonly BrosShopDbContext _context;
+        private readonly string _connectionString;
         public CommodityMonitorWindow()
         {
             InitializeComponent();
             Loaded += CommodityMonitorWindow_Loaded;
-			_authService = new AuthService();
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _authService = new AuthService();
+            _context = new BrosShopDbContext(_connectionString);
             CheckTokenAndOpenAuthWindow();
         }
 
@@ -40,7 +41,7 @@ namespace BrosShop
             UpdateThemeImage();
             ApplyTheme();
             //CheckTokenAndOpenAuthWindow();
-		}
+        }
 
         private void CheckTokenAndOpenAuthWindow()
         {
@@ -77,16 +78,16 @@ namespace BrosShop
                 switch (selectedTab.Name.ToString())
                 {
                     case "ProductsTabItem":
-                        mainFrame.Navigate(new ShowProductsPage());
+                        mainFrame.Navigate(new ShowProductsPage(_context));
                         break;
                     case "OrdersTabItem":
-                        mainFrame.Navigate(new InteractionWithOrdersPage());
+                        mainFrame.Navigate(new InteractionWithOrdersPage(_context, _connectionString));
                         break;
                     case "CategoryTabItem":
-                        mainFrame.Navigate(new ShowCategoryPage());
+                        mainFrame.Navigate(new ShowCategoryPage(_context));
                         break;
                     case "ClientsTabItem":
-                        mainFrame.Navigate(new ShowClientsPage());
+                        mainFrame.Navigate(new ShowClientsPage(_context));
                         break;
                 }
             }

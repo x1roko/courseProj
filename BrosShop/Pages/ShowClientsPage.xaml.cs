@@ -22,23 +22,23 @@ namespace BrosShop.Pages
     /// </summary>
     public partial class ShowClientsPage : Page
     {
-        public ShowClientsPage()
+        private readonly BrosShopDbContext _context;
+
+        public ShowClientsPage(BrosShopDbContext context)
         {
             InitializeComponent();
             Loaded += ShowClientsPage_Loaded;
+            _context = context;
         }
 
         private async void ShowClientsPage_Loaded(object sender, RoutedEventArgs e)
         {
-
 			await LoadClients();
 		}
 
-
         public async Task LoadClients()
         {
-            using var context = new BrosShopDbContext();
-            var clients = await context.BrosShopUsers
+            var clients = await _context.BrosShopUsers
                 .AsNoTracking()
                 .ToListAsync();
 

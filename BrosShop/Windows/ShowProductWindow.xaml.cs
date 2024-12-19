@@ -1,18 +1,16 @@
 ﻿using BrosShop.Models;
 using BrosShop.Serveces;
 using BrosShop.Styles;
+using BrosShop.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
-using Newtonsoft.Json;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace BrosShop
 {
@@ -21,6 +19,8 @@ namespace BrosShop
     /// </summary>
     public partial class ShowProductWindow : Window, IThemeable
     {
+        private ObservableCollection<ProductAttribute> attributeList = [];
+
         private readonly ImageService _imageService;
         private readonly int _productId;
         public ShowProductWindow(int productId)
@@ -34,13 +34,20 @@ namespace BrosShop
 
         private async void ShowProductWindow_Loaded(object sender, RoutedEventArgs e)
         {
-			await LoadWindowAsync();
-			await LoadCategoriesAsync();
-		}
+            await LoadWindowAsync();
+            await LoadCategoriesAsync();
+            await LoadColorsAndSizesAsync();
+        }
 
         public async Task LoadCategoriesAsync()
         {
-            using BrosShopDbContext context = new();
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var _connectionString = configuration.GetConnectionString("DefaultConnection");
+            using BrosShopDbContext context = new(_connectionString);
 
             var product = context.BrosShopProducts.FirstOrDefault(p => p.BrosShopProductId == _productId);
 
@@ -70,7 +77,13 @@ namespace BrosShop
         {
             try
             {
-                using var context = new BrosShopDbContext();
+                var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+                var _connectionString = configuration.GetConnectionString("DefaultConnection");
+                using BrosShopDbContext context = new(_connectionString);
 
                 var product = await context.BrosShopProducts
                     .Include(p => p.BrosShopImages)
@@ -116,6 +129,21 @@ namespace BrosShop
                     nameProductTextBox.Text = "Продукт не найден";
                     selectedImageProduct.Source = null; // Или установить изображение по умолчанию
                 }
+
+                var attributes = await context.BrosShopProductAttributes
+                .Where(a => a.BrosShopProductId == _productId)
+                .Include(a => a.BrosShopColor)
+                .Include(a => a.BrosShopSize)
+                .Select(a => new ProductAttribute
+                {
+                    ColorTitle = a.BrosShopColor.ColorTitle,
+                    Size = a.BrosShopSize.Size,
+                    Quantity = a.BrosShopCount
+                })
+                .ToListAsync();
+
+                attributeList = new ObservableCollection<ProductAttribute>(attributes);
+                attributesListBox.ItemsSource = attributeList;
             }
             catch (Exception ex)
             {
@@ -219,7 +247,9 @@ namespace BrosShop
                     Int32.TryParse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString(), out category);
                 else
                     category = 0;
+
             Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
+
             string description = descriptionProductTextBox.Text;
 
             // Проверяем, что цены корректные
@@ -237,7 +267,13 @@ namespace BrosShop
 
             Int32.TryParse(idTextBlock.Text, out int id);
 
-            using var context = new BrosShopDbContext();
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            var _connectionString = configuration.GetConnectionString("DefaultConnection");
+            using BrosShopDbContext context = new(_connectionString);
 
             var product = context.BrosShopProducts.Find(id);
 
@@ -266,6 +302,38 @@ namespace BrosShop
             categoryCheckBox.IsEnabled = false;
             wbArticulProductTextBox.IsReadOnly = true;
             descriptionProductTextBox.IsReadOnly = true;
+
+            // Удаляем существующие атрибуты
+            context.BrosShopProductAttributes.RemoveRange(product.BrosShopProductAttributes);
+
+            // Добавляем новые атрибуты
+            foreach (var attribute in attributeList)
+            {
+                var productAttribute = new BrosShopProductAttribute
+                {
+                    BrosShopProductId = product.BrosShopProductId,
+                    BrosShopColorId = GetColorIdByTitle(attribute.ColorTitle, context), // Получаем ID цвета по названию
+                    BrosShopSizeId = GetSizeIdBySize(attribute.Size, context), // Получаем ID размера по названию
+                    BrosShopCount = attribute.Quantity
+                };
+                context.BrosShopProductAttributes.Add(productAttribute);
+            }
+
+            context.SaveChanges();
+        }
+
+        // Метод для получения ID цвета по названию
+        private int GetColorIdByTitle(string colorTitle, BrosShopDbContext context)
+        {
+            var color = context.BrosShopColors.FirstOrDefault(c => c.ColorTitle == colorTitle);
+            return color?.ColorId ?? 0; // Возвращаем 0, если цвет не найден
+        }
+
+        // Метод для получения ID размера по названию
+        private int GetSizeIdBySize(string size, BrosShopDbContext context)
+        {
+            var sizeEntity = context.BrosShopSizes.FirstOrDefault(s => s.Size == size);
+            return sizeEntity?.SizeId ?? 0; // Возвращаем 0, если размер не найден
         }
 
         private void PriceProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -320,5 +388,72 @@ namespace BrosShop
                 Resources.MergedDictionaries.Add(lightTheme);
             Background = (Brush)Resources["WindowBackground"];
         }
+
+        private void AddAttributeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Получаем выбранные значения
+            var selectedColor = colorComboBox.SelectedItem as ComboBoxItem;
+            var selectedSize = sizeComboBox.SelectedItem as ComboBoxItem;
+            int quantity;
+
+            if (selectedColor == null || selectedSize == null || !int.TryParse(quantityTextBox.Text, out quantity))
+            {
+                MessageBox.Show("Пожалуйста, выберите цвет, размер и введите количество.");
+                return;
+            }
+
+            // Создаем новый атрибут
+            var attribute = new ProductAttribute
+            {
+                ColorTitle = selectedColor.Content.ToString(), // Сохраняем название цвета
+                Size = selectedSize.Content.ToString(), // Сохраняем название размера
+                Quantity = quantity
+            };
+
+            // Добавляем атрибут в список
+            attributeList.Add(attribute);
+
+            // Очищаем поля ввода после добавления
+            colorComboBox.SelectedItem = null;
+            sizeComboBox.SelectedItem = null;
+            quantityTextBox.Clear();
+        }
+
+        public async Task LoadColorsAndSizesAsync()
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var _connectionString = configuration.GetConnectionString("DefaultConnection");
+            using (var context = new BrosShopDbContext(_connectionString))
+            {
+                // Загрузка цветов
+                var colors = await context.BrosShopColors.ToListAsync();
+                colorComboBox.Items.Clear();
+                foreach (var color in colors)
+                {
+                    colorComboBox.Items.Add(new ComboBoxItem
+                    {
+                        Content = color.ColorTitle, // Предположим, что у вас есть свойство ColorName
+                        Tag = color.ColorId // Предположим, что у вас есть свойство BrosShopColorId
+                    });
+                }
+
+                // Загрузка размеров
+                var sizes = await context.BrosShopSizes.ToListAsync();
+                sizeComboBox.Items.Clear();
+                foreach (var size in sizes)
+                {
+                    sizeComboBox.Items.Add(new ComboBoxItem
+                    {
+                        Content = size.Size, // Предположим, что у вас есть свойство SizeName
+                        Tag = size.SizeId // Предположим, что у вас есть свойство BrosShopSizeId
+                    });
+                }
+            }
+        }
+
     }
 }

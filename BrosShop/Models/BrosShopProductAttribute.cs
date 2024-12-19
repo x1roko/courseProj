@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BrosShop.Models;
+﻿namespace BrosShop.Models;
 
 public partial class BrosShopProductAttribute
 {
@@ -11,9 +8,13 @@ public partial class BrosShopProductAttribute
 
     public int BrosShopCount { get; set; }
 
-    public string? BrosShopColor { get; set; }
+    public int? BrosShopColorId { get; set; }
 
-    public string? BrosShopSize { get; set; }
+    public int? BrosShopSizeId { get; set; }
+
+    public virtual BrosShopColor? BrosShopColor { get; set; }
 
     public virtual BrosShopProduct BrosShopProduct { get; set; } = null!;
+
+    public virtual BrosShopSize? BrosShopSize { get; set; }
 }

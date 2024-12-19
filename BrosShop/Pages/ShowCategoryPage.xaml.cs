@@ -23,10 +23,13 @@ namespace BrosShop.Pages
     /// </summary>
     public partial class ShowCategoryPage : Page
     {
-        public ShowCategoryPage()
+        private readonly BrosShopDbContext _context;
+
+        public ShowCategoryPage(BrosShopDbContext context)
         {
             InitializeComponent();
             Loaded += ShowCategoryPage_Loaded;
+            _context = context;
         }
 
         private async void ShowCategoryPage_Loaded(object sender, RoutedEventArgs e)
@@ -37,8 +40,7 @@ namespace BrosShop.Pages
 
         public async Task LoadCategories()
         {
-            using var context = new BrosShopDbContext();
-            var categories = await context.BrosShopCategories
+            var categories = await _context.BrosShopCategories
                 .AsNoTracking()
                 .ToListAsync();
 

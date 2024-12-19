@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using BrosShop.Models;
+﻿using BrosShop.Models;
 using BrosShop.Styles;
 using BrosShop.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Windows;
+using System.Windows.Media;
 
 namespace BrosShop.Windows
 {
@@ -33,29 +24,35 @@ namespace BrosShop.Windows
 
         private async void ShowOrderWindow_Loaded(object sender, RoutedEventArgs e)
 
-		{
-			ApplyTheme();
-			await LoadProductsAsync();
-		}
+        {
+            ApplyTheme();
+            await LoadProductsAsync();
+        }
 
         public async Task LoadProductsAsync()
         {
-            using var context = new BrosShopDbContext();
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            var _connectionString = configuration.GetConnectionString("DefaultConnection");
+            using BrosShopDbContext context = new(_connectionString);
 
             var products = await context.BrosShopOrderCompositions
-                .Include(oc => oc.BrosShopProduct)
-                .Include(oc => oc.BrosShopProduct.BrosShopCategory)
-                .Include(oc => oc.BrosShopProduct.BrosShopProductAttributes)
+                .Include(oc => oc.BrosShopAttributes.BrosShopProduct)
+                .Include(oc => oc.BrosShopAttributes.BrosShopProduct.BrosShopCategory)
+                .Include(oc => oc.BrosShopAttributes.BrosShopProduct.BrosShopProductAttributes)
                 .Where(oc => oc.BrosShopOrderId == _orderId)
                 .Select(oc => new BrosShopSaledProducts
                 {
-                    BrosShopProductId = oc.BrosShopProductId,
-                    BrosShopTitle = oc.BrosShopProduct.BrosShopTitle,
+                    BrosShopProductId = oc.BrosShopAttributes.BrosShopProduct.BrosShopProductId,
+                    BrosShopTitle = oc.BrosShopAttributes.BrosShopProduct.BrosShopTitle,
                     BrosShopPrice = oc.BrosShopCost,
                     BrosShopTurnover = Math.Round(oc.BrosShopCost * oc.BrosShopQuantity),
-                    BrosShopProfit = oc.BrosShopCost - oc.BrosShopProduct.BrosShopPurcharesePrice,
-                    BrosShopCategoryTitle = oc.BrosShopProduct.BrosShopCategory.BrosShopCategoryTitle,
-                    BrosShopAttributeId = oc.BrosShopProduct.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
+                    BrosShopProfit = oc.BrosShopCost - oc.BrosShopAttributes.BrosShopProduct.BrosShopPurcharesePrice,
+                    BrosShopCategoryTitle = oc.BrosShopAttributes.BrosShopProduct.BrosShopCategory.BrosShopCategoryTitle,
+                    BrosShopAttributeId = oc.BrosShopAttributes.BrosShopProduct.BrosShopProductAttributes.Select(pa => pa.BrosShopAttributesId).FirstOrDefault(),
                     BrosShopCount = oc.BrosShopQuantity
                 }).ToListAsync();
 

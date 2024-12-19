@@ -37,7 +37,13 @@ namespace BrosShop
 
         public async Task LoadCategoriesAsync()
         {
-            using BrosShopDbContext context = new();
+            var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            var _connectionString = configuration.GetConnectionString("DefaultConnection");
+            using BrosShopDbContext context = new(_connectionString);
 
             var categoriesQuery = context.BrosShopCategories.ToList();
 
@@ -97,8 +103,13 @@ namespace BrosShop
                     BrosShopWbarticul = wbArticul,
                     BrosShopDiscountPercent = 0
                 };
+                var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-                using var context = new BrosShopDbContext();
+                var _connectionString = configuration.GetConnectionString("DefaultConnection");
+                using BrosShopDbContext context = new(_connectionString);
                 await context.BrosShopProducts.AddAsync(product);
                 context.SaveChanges();
                 // После успешного сохранения

@@ -33,7 +33,6 @@
                         <GridViewColumn Header="Цена " DisplayMemberBinding="{Binding BrosShopDiscountPrice}" />
                         <GridViewColumn Header="Прибыль" DisplayMemberBinding="{Binding BrosShopProfit}" />
                         <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding BrosShopCount}"/>
-                        <GridViewColumn Header="Категория" DisplayMemberBinding="{Binding BrosShopCategoryTitle}"/>
                     </GridView>
                 </ListView.View>
             </ListView>

@@ -18,10 +18,14 @@ namespace BrosShop
 
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 18; // Количество элементов на странице
-        public InteractionWithOrdersPage()
+        private readonly BrosShopDbContext _context;
+        private readonly string _connectionString;
+        public InteractionWithOrdersPage(BrosShopDbContext context, string connectionString)
         {
             InitializeComponent();
             Loaded += InteractionWithOrdersPage_Loaded;
+            _context = context;
+            _connectionString = connectionString;
         }
 
         private async void InteractionWithOrdersPage_Loaded(object sender, RoutedEventArgs e)
@@ -34,36 +38,33 @@ namespace BrosShop
         {
             try
             {
-                using (BrosShopDbContext context = new())
+                var orderData = await _context.BrosShopOrders
+                    .AsNoTracking()
+                    .Skip((_currentPage - 1) * _pageSize)
+                    .Take(_pageSize)
+                    .Include(o => o.BrosShopUser)
+                    .GroupJoin(
+                        _context.BrosShopOrderCompositions.AsNoTracking(),
+                        order => order.BrosShopOrderId,
+                        composition => composition.BrosShopOrderId,
+                        (order, compositions) => new
+                        {
+                            Order = order,
+                            ItemCount = compositions.Sum(c => c.BrosShopQuantity)
+                        })
+                    .ToListAsync();
+
+                var orderModels = orderData.Select(data => new BrosShopOrderModel
                 {
-                    var orderData = await context.BrosShopOrders
-                        .AsNoTracking()
-                        .Skip((_currentPage - 1) * _pageSize)
-                        .Take(_pageSize)
-                        .Include(o => o.BrosShopUser)
-                        .GroupJoin(
-                            context.BrosShopOrderCompositions.AsNoTracking(),
-                            order => order.BrosShopOrderId,
-                            composition => composition.BrosShopOrderId,
-                            (order, compositions) => new
-                            {
-                                Order = order,
-                                ItemCount = compositions.Sum(c => c.BrosShopQuantity)
-                            })
-                        .ToListAsync();
+                    BrosShopOrderId = data.Order.BrosShopOrderId,
+                    BrosShopDateTimeOrder = data.Order.BrosShopDateTimeOrder,
+                    BrosShopTypeOrder = data.Order.BrosShopTypeOrder,
+                    UserName = data.Order.BrosShopUser?.BrosShopUsername,
+                    ItemCount = data.ItemCount
+                }).ToList();
 
-                    var orderModels = orderData.Select(data => new BrosShopOrderModel
-                    {
-                        BrosShopOrderId = data.Order.BrosShopOrderId,
-                        BrosShopDateTimeOrder = data.Order.BrosShopDateTimeOrder,
-                        BrosShopTypeOrder = data.Order.BrosShopTypeOrder,
-                        UserName = data.Order.BrosShopUser?.BrosShopUsername,
-                        ItemCount = data.ItemCount
-                    }).ToList();
-
-                    // Устанавливаем источник данных для ListView
-                    ordersListView.ItemsSource = orderModels;
-                }
+                // Устанавливаем источник данных для ListView
+                ordersListView.ItemsSource = orderModels;
             }
 
             catch (Exception)
@@ -76,55 +77,51 @@ namespace BrosShop
         {
             try
             {
-                using (BrosShopDbContext context = new())
+                var activeTypes = new HashSet<string>();
+
+                if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
+                if (cassaCheckBox.IsChecked == true) activeTypes.Add("касса");
+                if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
+
+                // Получаем все заказы из базы данных
+                var allOrders = await _context.BrosShopOrders
+                    .AsNoTracking()
+                    .Skip((_currentPage - 1) * _pageSize)
+                    .Take(_pageSize)
+                    .ToListAsync();
+
+                // Создаем новый список для хранения отфильтрованных заказов
+                List<BrosShopOrder> filteredOrders = [];
+
+                foreach (var order in allOrders)
                 {
-
-                    var activeTypes = new HashSet<string>();
-
-                    if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
-                    if (cassaCheckBox.IsChecked == true) activeTypes.Add("касса");
-                    if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
-
-                    // Получаем все заказы из базы данных
-                    var allOrders = await context.BrosShopOrders
-                        .AsNoTracking()
-                        .Skip((_currentPage - 1) * _pageSize)
-                        .Take(_pageSize)
-                        .ToListAsync();
-
-                    // Создаем новый список для хранения отфильтрованных заказов
-                    List<BrosShopOrder> filteredOrders = [];
-
-                    foreach (var order in allOrders)
+                    // Проверяем, содержит ли BrosShopTypeOrder хотя бы один из активных типов
+                    if (order.BrosShopTypeOrder != null && activeTypes.Any(type => order.BrosShopTypeOrder.Contains(type)))
                     {
-                        // Проверяем, содержит ли BrosShopTypeOrder хотя бы один из активных типов
-                        if (order.BrosShopTypeOrder != null && activeTypes.Any(type => order.BrosShopTypeOrder.Contains(type)))
-                        {
-                            filteredOrders.Add(order);
-                        }
+                        filteredOrders.Add(order);
                     }
-
-                    var orderModels = new List<BrosShopOrderModel>();
-
-                    foreach (var order in filteredOrders)
-                    {
-                        // Получаем количество позиций для текущего заказа
-                        int itemCount = await GetItemCountByOrderId(order.BrosShopOrderId);
-
-                        // Создаем модель заказа и добавляем в список
-                        orderModels.Add(new BrosShopOrderModel
-                        {
-                            BrosShopOrderId = order.BrosShopOrderId,
-                            BrosShopDateTimeOrder = order.BrosShopDateTimeOrder,
-                            BrosShopTypeOrder = order.BrosShopTypeOrder,
-                            UserName = order.BrosShopUser?.BrosShopUsername, // Проверяем на null
-                            ItemCount = itemCount
-                        });
-                    }
-
-                    // Устанавливаем источник данных для ListView
-                    ordersListView.ItemsSource = orderModels;
                 }
+
+                var orderModels = new List<BrosShopOrderModel>();
+
+                foreach (var order in filteredOrders)
+                {
+                    // Получаем количество позиций для текущего заказа
+                    int itemCount = await GetItemCountByOrderId(order.BrosShopOrderId);
+
+                    // Создаем модель заказа и добавляем в список
+                    orderModels.Add(new BrosShopOrderModel
+                    {
+                        BrosShopOrderId = order.BrosShopOrderId,
+                        BrosShopDateTimeOrder = order.BrosShopDateTimeOrder,
+                        BrosShopTypeOrder = order.BrosShopTypeOrder,
+                        UserName = order.BrosShopUser?.BrosShopUsername, // Проверяем на null
+                        ItemCount = itemCount
+                    });
+                }
+
+                // Устанавливаем источник данных для ListView
+                ordersListView.ItemsSource = orderModels;
             }
             catch (Exception)
             {
@@ -132,9 +129,9 @@ namespace BrosShop
             }
         }
 
-        private async static Task<int> GetItemCountByOrderId(int orderId)
+        private async Task<int> GetItemCountByOrderId(int orderId)
         {
-            using (var context = new BrosShopDbContext())
+            using (BrosShopDbContext context = new(_connectionString))
             {
                 return await context.BrosShopOrderCompositions
                     .CountAsync(oc => oc.BrosShopOrderId == orderId);
@@ -150,39 +147,41 @@ namespace BrosShop
         {
             try
             {
-                decimal turnover = 0, profit = 0;
-
-                using var context = new BrosShopDbContext();
-
-                if (!mainCalendar.SelectedDate.HasValue)
+                using (BrosShopDbContext context = new(_connectionString))
                 {
-                    mainCalendar.SelectedDate = DateTime.Today;
+                    decimal turnover = 0, profit = 0;
+
+                    if (!mainCalendar.SelectedDate.HasValue)
+                    {
+                        mainCalendar.SelectedDate = DateTime.Today;
+                    }
+
+                    var ordersIds = await context.BrosShopOrders
+                        .AsNoTracking()
+                        .Where(o => o.BrosShopDateTimeOrder.Date == mainCalendar.SelectedDate.Value)
+                        .Select(o => o.BrosShopOrderId)
+                        .ToListAsync();
+
+                    if (ordersIds.Count == 0)
+                    {
+                        ShowProfit();
+                        return;
+                    }
+
+                    var ordersCompositions = await context.BrosShopOrderCompositions
+                        .AsNoTracking()
+                        .Where(o => ordersIds.Contains(o.BrosShopOrderId))
+                        .Include(o => o.BrosShopAttributes.BrosShopProduct)
+                        .ToListAsync();
+
+                    foreach (var order in ordersCompositions)
+                    {
+                        turnover += order.BrosShopCost * order.BrosShopQuantity;
+                        profit += (order.BrosShopCost - order.BrosShopAttributes.BrosShopProduct.BrosShopPurcharesePrice) * order.BrosShopQuantity;
+                    }
+                    ShowProfit(turnover, profit);
                 }
 
-                var ordersIds = await context.BrosShopOrders
-                    .AsNoTracking()
-                    .Where(o => o.BrosShopDateTimeOrder.Date == mainCalendar.SelectedDate.Value)
-                    .Select(o => o.BrosShopOrderId)
-                    .ToListAsync();
-
-                if (ordersIds.Count == 0)
-                {
-                    ShowProfit();
-                    return;
-                }
-
-                var ordersCompositions = await context.BrosShopOrderCompositions
-                    .AsNoTracking()
-                    .Where(o => ordersIds.Contains(o.BrosShopOrderId))
-                    .Include(o => o.BrosShopProduct)
-                    .ToListAsync();
-
-                foreach (var order in ordersCompositions)
-                {
-                    turnover += order.BrosShopCost * order.BrosShopQuantity;
-                    profit += (order.BrosShopCost - order.BrosShopProduct.BrosShopPurcharesePrice) * order.BrosShopQuantity;
-                }
-                ShowProfit(turnover, profit);
             }
             catch (Exception exception)
             {
@@ -241,27 +240,25 @@ namespace BrosShop
         {
             try
             {
-                using BrosShopDbContext context = new();
-
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
                 // Получаем заказы за текущий месяц
                 var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 var endDate = startDate.AddMonths(1).AddDays(-1);
 
-                var orders = context.BrosShopOrders
+                var orders = _context.BrosShopOrders
                     .AsNoTracking()
                     .Where(o => o.BrosShopDateTimeOrder >= startDate && o.BrosShopDateTimeOrder <= endDate)
-                    //.Include(o => o.)
-                    //.ThenInclude(c => c.BrosShopProduct)
+                    .Include(o => o.BrosShopUser)
+                    //.ThenInclude(c => c.)
                     .Select(o => o.BrosShopOrderId)
                     .ToHashSet();
 
-                var ordersComposition = await context.BrosShopOrderCompositions
+                var ordersComposition = await _context.BrosShopOrderCompositions
                     .AsNoTracking()
                     .Where(oc => orders.Contains(oc.BrosShopOrderId)) // Сравниваем с idOrder
                     .Include(oc => oc.BrosShopOrder)
-                    .Include(oc => oc.BrosShopProduct) // Загружаем продукты для каждой составной части
+                    .Include(oc => oc.BrosShopAttributes.BrosShopProduct) // Загружаем продукты для каждой составной части
                     .ToListAsync();
 
                 // Создаем Excel файл
@@ -301,7 +298,7 @@ namespace BrosShop
                             worksheet.Cells[row, 1].Value = ""; // idOrder
                             worksheet.Cells[row, 2].Value = ""; // DatetimeOrder
                             worksheet.Cells[row, 3].Value = ""; // summ
-                            worksheet.Cells[row, 4].Value = composition.BrosShopProduct.BrosShopTitle; // Title
+                            worksheet.Cells[row, 4].Value = composition.BrosShopAttributes.BrosShopProduct.BrosShopTitle; // Title
                             worksheet.Cells[row, 5].Value = composition.BrosShopCost; // Cost
                             worksheet.Cells[row, 6].Value = composition.BrosShopQuantity; // Quantity
                             row++;
