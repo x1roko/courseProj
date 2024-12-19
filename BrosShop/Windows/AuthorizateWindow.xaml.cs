@@ -40,6 +40,7 @@ namespace BrosShop.Windows
 
         public void ApplyTheme()
         {
+            
             Resources.MergedDictionaries.Clear();
 
             ResourceDictionary lightTheme = (ResourceDictionary)Application.LoadComponent(new Uri("../Styles/LightTheme.xaml", UriKind.Relative));
@@ -74,6 +75,5 @@ namespace BrosShop.Windows
                 AuthorizeButton_Click(sender, e);
             }
         }
-
     }
 }

@@ -11,7 +11,7 @@
     <!-- Темный цвет для выделенного текста -->
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#FF1E1E1E"/>
     <!-- Темно-серый фон для панелей -->
-    <SolidColorBrush x:Key="ButtonForegroundBrush" Color="#FF000000"/>
+    <SolidColorBrush x:Key="ButtonForegroundBrush" Color="#FFFFFFFF"/>
     <!-- Черный текст на кнопках -->
     <SolidColorBrush x:Key="WindowBackground" Color="#FF1B1B1B"/>
     <!-- Темный фон окна -->
@@ -73,7 +73,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
 
     <Style TargetType="GridViewColumnHeader">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>

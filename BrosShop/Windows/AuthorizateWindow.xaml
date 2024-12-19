@@ -23,6 +23,6 @@
         <TextBlock Text="Пароль:" FontSize="16" Margin="0,0,0,5"/>
         <TextBox x:Name="passwordTextBox" Margin="0,0,0,15" KeyDown="TextBox_KeyDown" Padding="10" FontSize="14"/>
 
-        <Button x:Name="authorizeButton" Content="Авторизоваться" Click="AuthorizeButton_Click" Padding="10" FontSize="16" Foreground="White" Cursor="Hand"/>
+        <Button x:Name="authorizeButton" Content="Авторизоваться" Click="AuthorizeButton_Click" Cursor="Hand"/>
     </StackPanel>
 </Window>

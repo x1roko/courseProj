@@ -9,7 +9,7 @@
     <!-- Черный текст -->
     <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#FFE0E0E0"/>
     <!-- Светло-серый фон для панелей -->
-    <SolidColorBrush x:Key="ButtonForegroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="ButtonForegroundBrush" Color="#FF000000"/>
     <!-- Белый текст на кнопках -->
     <SolidColorBrush x:Key="SelectedForegroundBrush" Color="#FF000000"/>
     <!-- Черный цвет для выделенного текста -->
@@ -29,6 +29,34 @@
     </Style>
 
     <Style TargetType="ListViewItem">
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="15"/>
+        <!-- Увеличьте отступы -->
+        <Setter Property="FontSize" Value="16"/>
+        <!-- Увеличьте размер шрифта -->
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource SelectedBackgroundBrush}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource SelectedBackgroundBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="ListBox">
+        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="#FF3A3A3A"/>
+        <Setter Property="Padding" Value="10"/>
+        <!-- Увеличьте отступы -->
+    </Style>
+
+    <Style TargetType="ListBoxItem">
         <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="Margin" Value="5"/>
@@ -168,7 +196,7 @@
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource SecondaryBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ButtonForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="#FF3A3A3A"/>
+        <Setter Property="BorderBrush" Value="#FFBBDEFB"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="15"/>
         <!-- Увеличьте отступы -->
