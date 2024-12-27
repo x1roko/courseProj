@@ -18,13 +18,11 @@ namespace BrosShop
 
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 18; // Количество элементов на странице
-        private readonly BrosShopDbContext _context;
         private readonly string _connectionString;
-        public InteractionWithOrdersPage(BrosShopDbContext context, string connectionString)
+        public InteractionWithOrdersPage(string connectionString)
         {
             InitializeComponent();
             Loaded += InteractionWithOrdersPage_Loaded;
-            _context = context;
             _connectionString = connectionString;
         }
 
@@ -38,13 +36,15 @@ namespace BrosShop
         {
             try
             {
-                var orderData = await _context.BrosShopOrders
+                BrosShopDbContext context = new(_connectionString);
+
+                var orderData = await context.BrosShopOrders
                     .AsNoTracking()
                     .Skip((_currentPage - 1) * _pageSize)
                     .Take(_pageSize)
                     .Include(o => o.BrosShopUser)
                     .GroupJoin(
-                        _context.BrosShopOrderCompositions.AsNoTracking(),
+                        context.BrosShopOrderCompositions.AsNoTracking(),
                         order => order.BrosShopOrderId,
                         composition => composition.BrosShopOrderId,
                         (order, compositions) => new
@@ -77,6 +77,8 @@ namespace BrosShop
         {
             try
             {
+                BrosShopDbContext context = new(_connectionString);
+
                 var activeTypes = new HashSet<string>();
 
                 if (wbCheckBox.IsChecked == true) activeTypes.Add("WB");
@@ -84,7 +86,7 @@ namespace BrosShop
                 if (siteCheckBox.IsChecked == true) activeTypes.Add("веб-сайт");
 
                 // Получаем все заказы из базы данных
-                var allOrders = await _context.BrosShopOrders
+                var allOrders = await context.BrosShopOrders
                     .AsNoTracking()
                     .Skip((_currentPage - 1) * _pageSize)
                     .Take(_pageSize)
@@ -246,7 +248,9 @@ namespace BrosShop
                 var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 var endDate = startDate.AddMonths(1).AddDays(-1);
 
-                var orders = _context.BrosShopOrders
+                BrosShopDbContext context = new(_connectionString);
+
+                var orders = context.BrosShopOrders
                     .AsNoTracking()
                     .Where(o => o.BrosShopDateTimeOrder >= startDate && o.BrosShopDateTimeOrder <= endDate)
                     .Include(o => o.BrosShopUser)
@@ -254,7 +258,7 @@ namespace BrosShop
                     .Select(o => o.BrosShopOrderId)
                     .ToHashSet();
 
-                var ordersComposition = await _context.BrosShopOrderCompositions
+                var ordersComposition = await context.BrosShopOrderCompositions
                     .AsNoTracking()
                     .Where(oc => orders.Contains(oc.BrosShopOrderId)) // Сравниваем с idOrder
                     .Include(oc => oc.BrosShopOrder)

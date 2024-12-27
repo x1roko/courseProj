@@ -78,16 +78,16 @@ namespace BrosShop
                 switch (selectedTab.Name.ToString())
                 {
                     case "ProductsTabItem":
-                        mainFrame.Navigate(new ShowProductsPage(_context));
+                        mainFrame.Navigate(new ShowProductsPage(_connectionString));
                         break;
                     case "OrdersTabItem":
-                        mainFrame.Navigate(new InteractionWithOrdersPage(_context, _connectionString));
+                        mainFrame.Navigate(new InteractionWithOrdersPage(_connectionString));
                         break;
                     case "CategoryTabItem":
-                        mainFrame.Navigate(new ShowCategoryPage(_context));
+                        mainFrame.Navigate(new ShowCategoryPage(_connectionString));
                         break;
                     case "ClientsTabItem":
-                        mainFrame.Navigate(new ShowClientsPage(_context));
+                        mainFrame.Navigate(new ShowClientsPage(_connectionString));
                         break;
                 }
             }

@@ -22,13 +22,13 @@ namespace BrosShop.Pages
     /// </summary>
     public partial class ShowClientsPage : Page
     {
-        private readonly BrosShopDbContext _context;
+        private readonly string _connectionString;
 
-        public ShowClientsPage(BrosShopDbContext context)
+        public ShowClientsPage(string connectionString)
         {
             InitializeComponent();
             Loaded += ShowClientsPage_Loaded;
-            _context = context;
+            _connectionString = connectionString;
         }
 
         private async void ShowClientsPage_Loaded(object sender, RoutedEventArgs e)
@@ -38,7 +38,9 @@ namespace BrosShop.Pages
 
         public async Task LoadClients()
         {
-            var clients = await _context.BrosShopUsers
+            BrosShopDbContext context = new(_connectionString);
+
+            var clients = await context.BrosShopUsers
                 .AsNoTracking()
                 .ToListAsync();
 

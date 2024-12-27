@@ -242,14 +242,17 @@ namespace BrosShop
             decimal purchasePrice;
             decimal salePrice;
             int category = 0;
+
+            // Проверяем, выбран ли категорийный чекбокс
             if (!categoryCheckBox.IsChecked.Value)
+            {
                 if (categoryComboBox.SelectedItem != null)
                     Int32.TryParse((categoryComboBox.SelectedItem as ComboBoxItem).Tag.ToString(), out category);
                 else
                     category = 0;
+            }
 
             Int32.TryParse(wbArticulProductTextBox.Text, out int wbArticul);
-
             string description = descriptionProductTextBox.Text;
 
             // Проверяем, что цены корректные
@@ -268,15 +271,22 @@ namespace BrosShop
             Int32.TryParse(idTextBlock.Text, out int id);
 
             var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
 
             var _connectionString = configuration.GetConnectionString("DefaultConnection");
             using BrosShopDbContext context = new(_connectionString);
 
+            // Находим продукт по ID
             var product = context.BrosShopProducts.Find(id);
+            if (product == null)
+            {
+                MessageBox.Show("Продукт не найден.");
+                return;
+            }
 
+            // Обновляем данные продукта
             product.BrosShopTitle = name;
             product.BrosShopPurcharesePrice = purchasePrice;
             product.BrosShopPrice = salePrice;
@@ -285,55 +295,73 @@ namespace BrosShop
             product.BrosShopWbarticul = wbArticul == 0 ? null : wbArticul;
             product.BrosShopDiscountPercent = 0;
 
-            context.SaveChanges();
-
-            // После успешного сохранения
-            MessageBox.Show("Изменения успешно сохранены!");
-
-            // Деактивируем кнопку "Сохранить изменения" и активируем кнопку "Редактировать"
-            saveProductButton.Visibility = Visibility.Hidden;
-            editProductButton.Visibility = Visibility.Visible;
-
-            // Запрещаем редактирование полей
-            nameProductTextBox.IsReadOnly = true;
-            purcharesePriceProductTextBox.IsReadOnly = true;
-            priceProductTextBox.IsReadOnly = true;
-            categoryComboBox.IsEnabled = false;
-            categoryCheckBox.IsEnabled = false;
-            wbArticulProductTextBox.IsReadOnly = true;
-            descriptionProductTextBox.IsReadOnly = true;
-
-            // Удаляем существующие атрибуты
-            context.BrosShopProductAttributes.RemoveRange(product.BrosShopProductAttributes);
-
-            // Добавляем новые атрибуты
+            // Обновляем существующие атрибуты
             foreach (var attribute in attributeList)
             {
-                var productAttribute = new BrosShopProductAttribute
+                // Получаем существующий атрибут по ID (предполагается, что у вас есть ID атрибута)
+                var existingAttribute = context.BrosShopProductAttributes
+                    .FirstOrDefault(a => a.BrosShopProductId == product.BrosShopProductId &&
+                                         a.BrosShopColorId == GetColorIdByTitle(attribute.ColorTitle, context) &&
+                                         a.BrosShopSizeId == GetSizeIdBySize(attribute.Size, context));
+
+                if (existingAttribute != null)
                 {
-                    BrosShopProductId = product.BrosShopProductId,
-                    BrosShopColorId = GetColorIdByTitle(attribute.ColorTitle, context), // Получаем ID цвета по названию
-                    BrosShopSizeId = GetSizeIdBySize(attribute.Size, context), // Получаем ID размера по названию
-                    BrosShopCount = attribute.Quantity
-                };
-                context.BrosShopProductAttributes.Add(productAttribute);
+                    // Обновляем существующий атрибут
+                    existingAttribute.BrosShopCount = attribute.Quantity; // Обновляем количество
+                }
+                else
+                {
+                    // Если атрибут не найден, добавляем новый атрибут
+                    var newAttribute = new BrosShopProductAttribute
+                    {
+                        BrosShopProductId = product.BrosShopProductId,
+                        BrosShopColorId = GetColorIdByTitle(attribute.ColorTitle, context),
+                        BrosShopSizeId = GetSizeIdBySize(attribute.Size, context),
+                        BrosShopCount = attribute.Quantity
+                    };
+                    context.BrosShopProductAttributes.Add(newAttribute);
+                }
             }
 
-            context.SaveChanges();
+            // Сохраняем изменения в базе данных
+            try
+            {
+                context.SaveChanges();
+                MessageBox.Show("Изменения успешно сохранены!");
+
+                // Деактивируем кнопку "Сохранить изменения" и активируем кнопку "Редактировать"
+                saveProductButton.Visibility = Visibility.Hidden;
+                editProductButton.Visibility = Visibility.Visible;
+
+                // Запрещаем редактирование полей
+                nameProductTextBox.IsReadOnly = true;
+                purcharesePriceProductTextBox.IsReadOnly = true;
+                priceProductTextBox.IsReadOnly = true;
+                categoryComboBox.IsEnabled = false;
+                categoryCheckBox.IsEnabled = false;
+                wbArticulProductTextBox.IsReadOnly = true;
+                descriptionProductTextBox.IsReadOnly = true;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Обработка исключения при сохранении изменений
+                // Обработка исключения при сохранении изменений
+                MessageBox.Show($"Ошибка при сохранении изменений: {ex.InnerException?.Message}");
+            }
         }
 
-        // Метод для получения ID цвета по названию
-        private int GetColorIdByTitle(string colorTitle, BrosShopDbContext context)
+
+
+        private int? GetColorIdByTitle(string colorTitle, BrosShopDbContext context)
         {
             var color = context.BrosShopColors.FirstOrDefault(c => c.ColorTitle == colorTitle);
-            return color?.ColorId ?? 0; // Возвращаем 0, если цвет не найден
+            return color?.ColorId; // Возвращаем ID цвета или null, если не найден
         }
 
-        // Метод для получения ID размера по названию
-        private int GetSizeIdBySize(string size, BrosShopDbContext context)
+        private int? GetSizeIdBySize(string size, BrosShopDbContext context)
         {
             var sizeEntity = context.BrosShopSizes.FirstOrDefault(s => s.Size == size);
-            return sizeEntity?.SizeId ?? 0; // Возвращаем 0, если размер не найден
+            return sizeEntity?.SizeId; // Возвращаем ID размера или null, если не найден
         }
 
         private void PriceProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -391,32 +419,61 @@ namespace BrosShop
 
         private void AddAttributeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем выбранные значения
-            var selectedColor = colorComboBox.SelectedItem as ComboBoxItem;
-            var selectedSize = sizeComboBox.SelectedItem as ComboBoxItem;
-            int quantity;
-
-            if (selectedColor == null || selectedSize == null || !int.TryParse(quantityTextBox.Text, out quantity))
+            // Проверяем, выбрано ли что-то в списке атрибутов
+            if (attributesListBox.SelectedItem is ProductAttribute selectedAttribute)
             {
-                MessageBox.Show("Пожалуйста, выберите цвет, размер и введите количество.");
-                return;
+                // Обновляем количество существующего атрибута
+                if (int.TryParse(quantityTextBox.Text, out int quantity))
+                {
+                    selectedAttribute.Quantity = quantity;
+
+                    // Обновляем ListBox
+                    attributesListBox.Items.Refresh();
+                }
+                else
+                {
+                    MessageBox.Show("Пожалуйста, введите корректное количество.");
+                }
+            }
+            else
+            {
+                // Добавляем новый атрибут
+                if (colorComboBox.SelectedItem is ComboBoxItem newColor &&
+                    sizeComboBox.SelectedItem is ComboBoxItem newSize &&
+                    int.TryParse(quantityTextBox.Text, out int newQuantity))
+                {
+                    var newAttribute = new ProductAttribute
+                    {
+                        ColorTitle = newColor.Content.ToString(),
+                        Size = newSize.Content.ToString(),
+                        Quantity = newQuantity
+                    };
+
+                    // Добавляем новый атрибут в список
+                    attributesListBox.Items.Add(newAttribute);
+                }
+                else
+                {
+                    MessageBox.Show("Пожалуйста, выберите цвет, размер и введите количество.");
+                }
             }
 
-            // Создаем новый атрибут
-            var attribute = new ProductAttribute
-            {
-                ColorTitle = selectedColor.Content.ToString(), // Сохраняем название цвета
-                Size = selectedSize.Content.ToString(), // Сохраняем название размера
-                Quantity = quantity
-            };
-
-            // Добавляем атрибут в список
-            attributeList.Add(attribute);
-
-            // Очищаем поля ввода после добавления
+            // Очищаем поля после добавления/обновления
             colorComboBox.SelectedItem = null;
             sizeComboBox.SelectedItem = null;
             quantityTextBox.Clear();
+        }
+
+
+        private void AttributesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (attributesListBox.SelectedItem is ProductAttribute selectedAttribute) 
+            {
+                // Заполняем поля данными выбранного атрибута
+                colorComboBox.SelectedItem = selectedAttribute.ColorTitle; // Предполагается, что вы заполнили ComboBox цветами
+                sizeComboBox.SelectedItem = selectedAttribute.Size; // Предполагается, что вы заполнили ComboBox размерами
+                quantityTextBox.Text = selectedAttribute.Quantity.ToString();
+            }
         }
 
         public async Task LoadColorsAndSizesAsync()
@@ -454,6 +511,5 @@ namespace BrosShop
                 }
             }
         }
-
     }
-}
+        }

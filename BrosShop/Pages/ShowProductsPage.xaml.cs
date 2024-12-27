@@ -17,13 +17,13 @@ namespace BrosShop
         private ObservableCollection<BrosShopCategoryModel> _categories = new();
         private int _currentPage = 1; // Текущая страница
         private const int _pageSize = 18; // Количество элементов на странице
-        private readonly BrosShopDbContext _context;
+        private readonly string _connectionString;
 
-        public ShowProductsPage(BrosShopDbContext context)
+        public ShowProductsPage(string connectionString)
         {
             InitializeComponent();
             Loaded += ShowProductsPage_Loaded;
-            _context = context;
+            _connectionString = connectionString;
         }
 
         private async void ShowProductsPage_Loaded(object sender, RoutedEventArgs e)
@@ -44,7 +44,8 @@ namespace BrosShop
 
         public async Task LoadAllProductsAsync()
         {
-            var products = await _context.BrosShopProducts
+            BrosShopDbContext context = new(_connectionString);
+            var products = await context.BrosShopProducts
                 .AsNoTracking()
                 .Include(p => p.BrosShopProductAttributes)
                 .Include(p => p.BrosShopImages)
@@ -74,7 +75,9 @@ namespace BrosShop
                 .Select(c => c.BrosShopCategoryId)
                 .ToHashSet();
 
-            var products = await _context.BrosShopProducts
+            BrosShopDbContext context = new(_connectionString);
+
+            var products = await context.BrosShopProducts
                 .AsNoTracking()
                 .Include(p => p.BrosShopProductAttributes)
                 .Include(p => p.BrosShopImages)
@@ -100,7 +103,9 @@ namespace BrosShop
 
         public async Task LoadCategoriesAsync()
         {
-            var categories = await _context.BrosShopCategories
+            BrosShopDbContext context = new(_connectionString);
+
+            var categories = await context.BrosShopCategories
                 .Select(c => new BrosShopCategoryModel
                 {
                     BrosShopCategoryId = c.BrosShopCategoryId,
